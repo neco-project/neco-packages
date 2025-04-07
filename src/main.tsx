@@ -5,7 +5,10 @@ import '@mantine/core/styles.css'
 import { MantineProvider } from '@mantine/core'
 
 import App from './App.tsx'
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
 
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MantineProvider>
