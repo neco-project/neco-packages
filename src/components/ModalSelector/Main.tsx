@@ -17,7 +17,7 @@ const ModalSelector: React.FC<ModalSelectorProps> = ({
   preSelectedIds = [],
 }) => {
   return (
-    <DynamicModal isOpen={isOpen} onClose={onClose} title="Select a Row">
+    <DynamicModal isOpen={isOpen} onClose={onClose}>
       <RolePickerTabs
         onSelect={onSelect}
         onClose={onClose}

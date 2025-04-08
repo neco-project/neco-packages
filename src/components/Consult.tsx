@@ -1,44 +1,45 @@
 // Consult.tsx
+
 import React, { useState } from "react";
 import SelectOption from "./SelectOption";
 import ModalSelector from "./ModalSelector/Main";
+import CityComboBox from "./ComboBox";  // ← کامپوننت کمبو باکس جدید
 
 const Consult: React.FC = () => {
-  // در حالت چند انتخابی، آرایه از استرینگ (ID ها)
   const [selectedValue, setSelectedValue] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // نمونه داده برای SelectOption. value باید با ID در جدول یکی باشد.
+  // گزینه‌های لوکال در SelectOption:
   const options = [
-    { value: "1", label: "Role A" },
+    { value: "1", label: "Role A " },
     { value: "2", label: "Role B " },
     { value: "3", label: "Role C " },
     { value: "100", label: "Group A " },
     { value: "200", label: "Group B " },
   ];
 
-  // کاربر مستقیماً در SelectOption تغییر انتخاب دهد
+  // تغییر مقدار سلکت
   const handleSelectorChange = (value: string | string[]) => {
     setSelectedValue(value as string[]);
   };
 
-  // کلیک دکمۀ ...
+  // نمایش مودال
   const handleSelectorButtonClick = () => {
     setIsModalOpen(true);
   };
 
-  // اگر از مودال یک لیست از [{id, name}] بیاید
+  // دریافت نتایج انتخاب از مودال
   const handleModalSelect = (data: any[]) => {
-    // تبدیل آرایه‌ی اشیاء به آرایه‌ی ID
-    // data: [{id: '2', name: 'Role B'}, {id: '200', name: 'Group B'}, ...]
     const ids = data.map((item) => item.id);
-
-    // بدون تکرار
     setSelectedValue((prev) => Array.from(new Set([...prev, ...ids])));
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-8">
+      {/* کمبو باکس شهرها (CityComboBox) در بالا */}
+      <CityComboBox />
+
+      {/* سلکت چندانتخابی شما در پایین */}
       <SelectOption
         name="selector"
         options={options}
@@ -51,6 +52,7 @@ const Consult: React.FC = () => {
         multiple
       />
 
+      {/* مودال */}
       <ModalSelector
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
