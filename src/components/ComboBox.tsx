@@ -5,49 +5,103 @@ import { IconChevronDown, IconX } from '@tabler/icons-react';
 
 /**
  * کامپوننت ComboBox برای انتخاب شهرها.
- * - آیتم‌های انتخاب شده به صورت chip بالای Textarea نمایش داده می‌شوند.
+ * - آیتم‌های انتخاب‌شده به صورت chip بالای Textarea نمایش داده می‌شوند.
  * - یک آیکن فلش پایین در سمت چپ ورودی Textarea قرار دارد که
- *   تنها با کلیک روی آن dropdown باز می‌شود.
- * - دور آیکن یک border نمایش داده می‌شود و پس‌زمینه خاکستری کم است.
+ *   با کلیک روی آن dropdown باز یا بسته می‌شود.
+ * - آیتم‌های انتخاب‌شده در لیست dropdown به صورت disabled نمایش داده می‌شوند.
+ * - اگر کاربر در Textarea چیزی تایپ کند و نتیجه‌ی جستجو (match) وجود نداشته باشد،
+ *   dropdown بسته بماند.
+ * - اگر تطبیق وجود داشته باشد و کاربر گزینه‌ای از لیست انتخاب کند، مقدار ورودی پاک می‌شود.
+ *   در غیر این صورت مقدار وارد شده حفظ خواهد شد.
  */
 const CityComboBox: React.FC = () => {
   const allCities = ['تهران', 'شیراز', 'تبریز', 'مشهد', 'اصفهان', 'کرج', 'قم', 'اهواز'];
+
+  // نگهداری آیتم‌های انتخاب‌شده (چندتایی)
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  // نگهداری مقدار ورودی در Textarea
   const [inputValue, setInputValue] = useState('');
+  // کنترل وضعیت باز/بسته dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const combobox = useCombobox();
 
-  // فیلتر کردن لیست شهرها بر اساس مقدار ورودی
-  const filteredOptions = allCities.filter((city) =>
-    city.toLowerCase().includes(inputValue.toLowerCase().trim())
-  );
+  // محاسبه مقدار ورودی کاربر (به صورت lowercase و trimmed)
+  const trimmedInput = inputValue.trim().toLowerCase();
+  const anyMatch = trimmedInput
+    ? allCities.some(city => city.toLowerCase().includes(trimmedInput))
+    : true;
 
-  const options = filteredOptions.map((item) => (
-    <Combobox.Option value={item} key={item}>
+  // فیلتر کردن گزینه‌ها
+  // اگر تطبیق وجود داشته باشد، فقط گزینه‌های مطابق را نمایش می‌دهد؛ در غیر این صورت کل لیست نمایش داده شود.
+  const filteredOptions = anyMatch
+    ? allCities.filter(city => {
+        if (!trimmedInput) return true;
+        return city.toLowerCase().includes(trimmedInput);
+      })
+    : allCities;
+
+  // ترکیب آیتم‌های انتخاب‌شده با گزینه‌های فیلترشده (بدون تکرار)
+  const unionOptions = Array.from(new Set([...selectedItems, ...filteredOptions]));
+
+  // ساخت گزینه‌های Combobox؛ آیتم‌های انتخاب‌شده به صورت disabled نمایش داده می‌شوند.
+  const options = unionOptions.map(item => (
+    <Combobox.Option value={item} key={item} disabled={selectedItems.includes(item)}>
       {item}
     </Combobox.Option>
   ));
 
-  // زمانی که کاربر یک گزینه را انتخاب می‌کند
+  // در handleOptionSubmit، اگر مقدار تایپ شده (inputValue) تطبیق داشته باشد، پاک می‌شود.
   const handleOptionSubmit = (optionValue: string) => {
     if (!selectedItems.includes(optionValue)) {
-      setSelectedItems((prev) => [...prev, optionValue]);
+      setSelectedItems(prev => [...prev, optionValue]);
     }
-    setInputValue('');
+    // اگر کاربر متنی تایپ کرده است (غیر خالی) و همان مقدار با برخی از گزینه‌ها مطابقت داشته باشد،
+    // مقدار ورودی پاک می‌شود.
+    if (inputValue.trim() !== '' && anyMatch) {
+      setInputValue('');
+    }
     combobox.closeDropdown();
+    setIsDropdownOpen(false);
   };
 
-  // تغییر مقدار ورودی Textarea
+  // تغییر مقدار ورودی Textarea؛ dropdown تنها زمانی باز شود که گزینه‌ای مطابق وجود داشته باشد.
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(event.currentTarget.value);
-    // dropdown را باز نمی‌کنیم، تنها در صورت تایپ می‌توانید استفاده کنید
-    // اگر می‌خواهید تایپ هم dropdown را باز کند، می‌توانید این خط را اضافه کنید:
-    // combobox.openDropdown();
-    combobox.updateSelectedOptionIndex();
+    const newValue = event.currentTarget.value;
+    setInputValue(newValue);
+
+    const trimmed = newValue.trim().toLowerCase();
+    const matchingOptions = allCities.filter(city =>
+      city.toLowerCase().includes(trimmed)
+    );
+    if (matchingOptions.length > 0) {
+      if (!isDropdownOpen) {
+        combobox.openDropdown();
+        setIsDropdownOpen(true);
+      }
+      combobox.updateSelectedOptionIndex();
+    } else {
+      if (isDropdownOpen) {
+        combobox.closeDropdown();
+        setIsDropdownOpen(false);
+      }
+    }
+  };
+
+  // تابع toggle برای دکمه آیکن فلش
+  const toggleDropdown = () => {
+    if (isDropdownOpen) {
+      combobox.closeDropdown();
+      setIsDropdownOpen(false);
+    } else {
+      combobox.openDropdown();
+      setIsDropdownOpen(true);
+    }
   };
 
   // حذف یک آیتم از selectedItems
   const removeItem = (itemToRemove: string) => {
-    setSelectedItems((prev) => prev.filter((city) => city !== itemToRemove));
+    setSelectedItems(prev => prev.filter(city => city !== itemToRemove));
   };
 
   return (
@@ -55,7 +109,7 @@ const CityComboBox: React.FC = () => {
       {/* نمایش آیتم‌های انتخاب‌شده به صورت Chip-like */}
       {selectedItems.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-2">
-          {selectedItems.map((city) => (
+          {selectedItems.map(city => (
             <div
               key={city}
               className="px-2 py-1 bg-blue-100 text-blue-800 rounded flex items-center gap-1"
@@ -73,11 +127,11 @@ const CityComboBox: React.FC = () => {
 
       <Combobox onOptionSubmit={handleOptionSubmit} store={combobox}>
         <Combobox.Target>
-          {/* ظرف relative برای قرار دادن آیکن در کنار Textarea */}
+          {/* ظرف relative برای Textarea و آیکن */}
           <div className="relative">
-            {/* آیکن فلش پایین همراه با رویداد onClick تنها روی این بخش */}
+            {/* آیکن فلش که با کلیک آن dropdown toggle می‌شود */}
             <div
-              onClick={() => combobox.openDropdown()}
+              onClick={toggleDropdown}
               style={{
                 width: '2.5rem',
                 height: '100%',
@@ -89,16 +143,16 @@ const CityComboBox: React.FC = () => {
               <IconChevronDown size={16} className="text-gray-500" />
             </div>
             <Textarea
-              // حذف Label، Description و Placeholder
               placeholder=""
               value={inputValue}
               onChange={handleChange}
-              // حذف onClick و onFocus برای جلوگیری از باز شدن dropdown هنگام کلیک روی Textarea
-              onBlur={() => combobox.closeDropdown()}
+              onBlur={() => {
+                combobox.closeDropdown();
+                setIsDropdownOpen(false);
+              }}
               autosize
               minRows={2}
               maxRows={4}
-              // فاصله داخلی سمت چپ برای جا دادن آیکن به همراه border
               style={{ paddingLeft: '2.8rem' }}
             />
           </div>
