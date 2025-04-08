@@ -9,6 +9,9 @@ export interface DynamicModalProps {
   children?: React.ReactNode;
 }
 
+/**
+ * یک مودال عمومی که Mantine را رپ می‌کند
+ */
 const DynamicModal: React.FC<DynamicModalProps> = ({
   isOpen,
   onClose,
@@ -16,7 +19,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
   children,
 }) => {
   return (
-    <Modal opened={isOpen} onClose={onClose} title={title} centered>
+    <Modal opened={isOpen} onClose={onClose} title={title} centered size="lg">
       {children}
     </Modal>
   );

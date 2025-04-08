@@ -1,18 +1,28 @@
 // ModalSelector.tsx
 import React from "react";
-import DynamicModal from "../Modal"; // مسیر صحیح به DynamicModal.tsx
-import RolePickerTabs from "./RolePickerTabs"; // مسیر صحیح به RolePickerTabs.tsx
+import DynamicModal from "../Modal";
+import RolePickerTabs from "./RolePickerTabs";
 
 export interface ModalSelectorProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (data: any) => void;
+  onSelect: (data: any[]) => void;
+  preSelectedIds?: string[];
 }
 
-const ModalSelector: React.FC<ModalSelectorProps> = ({ isOpen, onClose, onSelect }) => {
+const ModalSelector: React.FC<ModalSelectorProps> = ({
+  isOpen,
+  onClose,
+  onSelect,
+  preSelectedIds = [],
+}) => {
   return (
     <DynamicModal isOpen={isOpen} onClose={onClose} title="Select a Row">
-      <RolePickerTabs onSelect={onSelect} onClose={onClose} />
+      <RolePickerTabs
+        onSelect={onSelect}
+        onClose={onClose}
+        preSelectedIds={preSelectedIds}
+      />
     </DynamicModal>
   );
 };

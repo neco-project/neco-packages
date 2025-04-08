@@ -1,37 +1,40 @@
 // Consult.tsx
 import React, { useState } from "react";
-import SelectOption from "./SelectOption"; // مسیر صحیح فایل SelectOption.tsx را تنظیم کنید
-import ModalSelector from "./ModalSelector/Main"; // مسیر صحیح ModalSelector.tsx
+import SelectOption from "./SelectOption";
+import ModalSelector from "./ModalSelector/Main";
 
 const Consult: React.FC = () => {
-  // در حالت چند انتخابی، مقدار انتخاب شده آرایه‌ای از رشته‌ها است.
+  // در حالت چند انتخابی، آرایه از استرینگ (ID ها)
   const [selectedValue, setSelectedValue] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // نمونه داده برای SelectOption. value باید با ID در جدول یکی باشد.
   const options = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { value: "1", label: "Role A" },
+    { value: "2", label: "Role B " },
+    { value: "3", label: "Role C " },
+    { value: "100", label: "Group A " },
+    { value: "200", label: "Group B " },
   ];
 
-  // تغییر مقدار سلکتور
+  // کاربر مستقیماً در SelectOption تغییر انتخاب دهد
   const handleSelectorChange = (value: string | string[]) => {
     setSelectedValue(value as string[]);
   };
 
-  // باز کردن مودال هنگام کلیک روی دکمه «...»
+  // کلیک دکمۀ ...
   const handleSelectorButtonClick = () => {
     setIsModalOpen(true);
   };
 
-  // زمانی که در مودال انتخاب می‌شود (مثلاً از RolePickerTabs)
-  const handleModalSelect = (data: any) => {
-    // فرض کنید data به صورت آرایه‌ای از اشیاء با فیلد name است.
-    const names = Array.isArray(data)
-      ? data.map((item) => item.name)
-      : [data.name];
-    // انتخاب‌های جدید را بدون تکرار به آرایه موجود اضافه می‌کنیم.
-    setSelectedValue((prev) => Array.from(new Set([...prev, ...names])));
+  // اگر از مودال یک لیست از [{id, name}] بیاید
+  const handleModalSelect = (data: any[]) => {
+    // تبدیل آرایه‌ی اشیاء به آرایه‌ی ID
+    // data: [{id: '2', name: 'Role B'}, {id: '200', name: 'Group B'}, ...]
+    const ids = data.map((item) => item.id);
+
+    // بدون تکرار
+    setSelectedValue((prev) => Array.from(new Set([...prev, ...ids])));
   };
 
   return (
@@ -47,13 +50,12 @@ const Consult: React.FC = () => {
         allowCustom
         multiple
       />
-      
-      {/* سایر بخش‌های صفحه می‌تواند در اینجا قرار گیرد */}
 
       <ModalSelector
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSelect={handleModalSelect}
+        preSelectedIds={selectedValue}
       />
     </div>
   );
