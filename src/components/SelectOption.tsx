@@ -106,19 +106,22 @@ const SelectOption: React.FC<DynamicSelectorProps> = ({
   return (
     <div className={className}>
       {label && (
-        <label
-          htmlFor={name}
-          style={{
-            fontSize: "0.75rem",
-            color: "#4B5563",
-            marginBottom: "0.25rem",
-            display: "block",
-          }}
-          title={label}
-        >
-          {label}
-        </label>
-      )}
+  <label
+    htmlFor={name}
+    style={{
+      fontSize: "0.75rem",
+      color: "#4B5563",
+      marginBottom: "0.25rem",
+      display: "block",
+      textAlign: "left",
+      fontWeight:"bold"
+    }}
+    title={label}
+  >
+    {label}
+  </label>
+)}
+
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "relative" }}>
         {leftIcon && (
           <div
