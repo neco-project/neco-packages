@@ -3,6 +3,7 @@ import { Tabs } from '@mantine/core'
 import Consult from './Consult'
 import ReAssign from './ReAssign'
 import { IconView360Arrow  , IconArrowForwardUp ,IconPlayerTrackNext} from '@tabler/icons-react'
+import Forward from './Forward'
 
 
 export default function AppTabs() {
@@ -29,7 +30,7 @@ export default function AppTabs() {
       </Tabs.Panel>
 
       <Tabs.Panel value="Forward" pt="xs">
-        Forward tab content
+        <Forward/>
       </Tabs.Panel>
     </Tabs>
   )
