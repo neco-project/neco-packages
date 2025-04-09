@@ -1,58 +1,64 @@
-// CityComboBox.tsx
+// GenericCombobox.tsx
 import React, { useState } from 'react';
 import { Combobox, Textarea, useCombobox } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
+export interface GenericComboboxProps {
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}
 
-const CityComboBox: React.FC = () => {
-  const allCities = ['تهران', 'شیراز', 'تبریز', 'مشهد', 'اصفهان', 'کرج', 'قم', 'اهواز'];
-
-  // state برای مقدار ورودی در Textarea (در اینجا همان مقدار انتخاب‌شده است)
-  const [inputValue, setInputValue] = useState('');
-  // state برای کنترل وضعیت باز/بسته dropdown
+const GenericCombobox: React.FC<GenericComboboxProps> = ({
+  options: allOptions,
+  value,
+  onChange,
+  placeholder = "",
+}) => {
+  // مقدار ورودی در Textarea (که همان مقدار انتخاب‌شده است)
+  const [inputValue, setInputValue] = useState(value);
+  // وضعیت باز/بسته بودن dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const combobox = useCombobox();
 
-  // محاسبه مقدار ورودی کاربر (به صورت lowercase و trimmed)
+  // فیلتر کردن گزینه‌ها بر اساس ورودی کاربر
   const trimmedInput = inputValue.trim().toLowerCase();
   const anyMatch = trimmedInput
-    ? allCities.some(city => city.toLowerCase().includes(trimmedInput))
+    ? allOptions.some(opt => opt.toLowerCase().includes(trimmedInput))
     : true;
 
-  // فیلتر کردن گزینه‌ها: اگر تطابق وجود داشته باشد، فقط گزینه‌های مطابق را نشان می‌دهد،
-  // در غیر این صورت کل لیست نمایش داده شود.
   const filteredOptions = anyMatch
-    ? allCities.filter(city => {
+    ? allOptions.filter(opt => {
         if (!trimmedInput) return true;
-        return city.toLowerCase().includes(trimmedInput);
+        return opt.toLowerCase().includes(trimmedInput);
       })
-    : allCities;
+    : allOptions;
 
-  // ساخت گزینه‌های Combobox (از آنجایی که انتخاب تکی است، نیازی به disabled کردن نیست)
-  const options = filteredOptions.map(item => (
+  const renderedOptions = filteredOptions.map(item => (
     <Combobox.Option value={item} key={item}>
       {item}
     </Combobox.Option>
   ));
 
-  // وقتی یک گزینه انتخاب شود: مقدار Textarea به مقدار گزینه تغییر می‌کند.
+  // وقتی یک گزینه انتخاب می‌شود
   const handleOptionSubmit = (optionValue: string) => {
     setInputValue(optionValue);
+    onChange(optionValue);
     combobox.closeDropdown();
     setIsDropdownOpen(false);
   };
 
-  // تغییر مقدار ورودی Textarea؛ در اینجا dropdown تنها زمانی باز می‌شود که گزینه‌ای مطابق وجود داشته باشد.
+  // تغییر مقدار ورودی Textarea
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = event.currentTarget.value;
     setInputValue(newValue);
+    onChange(newValue);
 
     const trimmed = newValue.trim().toLowerCase();
-    const matchingOptions = allCities.filter(city =>
-      city.toLowerCase().includes(trimmed)
+    const matchingOptions = allOptions.filter(opt =>
+      opt.toLowerCase().includes(trimmed)
     );
-
     if (matchingOptions.length > 0) {
       if (!isDropdownOpen) {
         combobox.openDropdown();
@@ -67,7 +73,7 @@ const CityComboBox: React.FC = () => {
     }
   };
 
-  // تابع toggle برای آیکن فلش: اگر dropdown باز باشد آن را می‌بندد و در غیر این صورت می‌بندد.
+  // تابع toggle برای آیکن فلش
   const toggleDropdown = () => {
     if (isDropdownOpen) {
       combobox.closeDropdown();
@@ -97,7 +103,7 @@ const CityComboBox: React.FC = () => {
               <IconChevronDown size={16} className="text-gray-500" />
             </div>
             <Textarea
-              placeholder=""
+              placeholder={placeholder}
               value={inputValue}
               onChange={handleChange}
               onBlur={() => {
@@ -114,10 +120,10 @@ const CityComboBox: React.FC = () => {
 
         <Combobox.Dropdown>
           <Combobox.Options>
-            {options.length === 0 ? (
-              <Combobox.Empty>شهری یافت نشد</Combobox.Empty>
+            {renderedOptions.length === 0 ? (
+              <Combobox.Empty>گزینه‌ای یافت نشد</Combobox.Empty>
             ) : (
-              options
+              renderedOptions
             )}
           </Combobox.Options>
         </Combobox.Dropdown>
@@ -126,4 +132,4 @@ const CityComboBox: React.FC = () => {
   );
 };
 
-export default CityComboBox;
+export default GenericCombobox;
