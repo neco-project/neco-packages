@@ -15,11 +15,9 @@ interface PostCat {
   ID: string;
   Name: string;
   Description: string;
-  // قبلاً PostsStr داشتیم، اگر نمی‌خواهید از آن استفاده کنید، می‌توانید بگذارید یا حذفش کنید
   PostsStr?: string;
 }
 
-/** دادهٔ فیک Role Groups */
 const fakeRoleGroups: PostCat[] = [
   { ID: "100", Name: "Group A", Description: "Description A", PostsStr: "1|2" },
   { ID: "200", Name: "Group B", Description: "Description B", PostsStr: "2|3" },
@@ -48,7 +46,6 @@ const RoleGroupPostPicker: React.FC<RoleGroupPostPickerProps> = ({
     }
   };
 
-  // وقتی انتخاب در DataTable تغییر کند
   const handleSelectionChanged = (rows: any[]) => {
     const mapped = rows.map((r) => ({
       id: String(r.ID),
