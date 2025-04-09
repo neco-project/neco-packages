@@ -1,6 +1,13 @@
 // SelectOption.tsx
 import React, { useState, useEffect } from "react";
-import { Select, MultiSelect, Button, Loader, SelectProps, MultiSelectProps } from "@mantine/core";
+import {
+  Select,
+  MultiSelect,
+  Button,
+  Loader,
+  SelectProps,
+  MultiSelectProps,
+} from "@mantine/core";
 
 export interface Option {
   value: string;
@@ -18,7 +25,6 @@ export interface DynamicSelectorProps {
   leftIcon?: React.ReactNode;
   error?: boolean;
   errorMessage?: string;
-  className?: string;
   disabled?: boolean;
   loading?: boolean;
   allowCustom?: boolean;
@@ -36,7 +42,6 @@ const SelectOption: React.FC<DynamicSelectorProps> = ({
   leftIcon,
   error = false,
   errorMessage = "",
-  className,
   disabled = false,
   loading = false,
   allowCustom = false,
@@ -58,92 +63,61 @@ const SelectOption: React.FC<DynamicSelectorProps> = ({
     onChange(values);
   };
 
-  let baseSelectProps: any = {
-    id: name,
-    placeholder: "انتخاب کنید",
-    data: data.map((option) => ({ value: option.value, label: option.label })),
-    disabled,
-    error: error ? (errorMessage ? errorMessage : true) : undefined,
-    style: {
-      fontSize: "0.875rem",
-      flex: 1,
-      paddingLeft: leftIcon ? "32px" : undefined,
-    },
-  };
+  // let baseSelectProps: any = {
+  //   id: name,
+  //   placeholder: "انتخاب کنید",
+  //   data: data.map((option) => ({ value: option.value, label: option.label })),
+  //   disabled,
+  //   error: error ? (errorMessage ? errorMessage : true) : undefined,
+  // };
 
-  if (allowCustom) {
-    baseSelectProps["creatable"] = allowCustom;
-    baseSelectProps["getCreateLabel"] = (query: string) => `Add "${query}"`;
-    baseSelectProps["onCreate"] = (query: string) => {
-      const newOption = { value: query, label: query };
-      setData((current: Option[]) => [...current, newOption]);
-      if (multiple) {
-        onChange([...(selectedValue as string[] || []), query]);
-      } else {
-        onChange(query);
-      }
-      return query;
-    };
-  }
+  // if (allowCustom) {
+  //   baseSelectProps["creatable"] = allowCustom;
+  //   baseSelectProps["getCreateLabel"] = (query: string) => `Add "${query}"`;
+  //   baseSelectProps["onCreate"] = (query: string) => {
+  //     const newOption = { value: query, label: query };
+  //     setData((current: Option[]) => [...current, newOption]);
+  //     if (multiple) {
+  //       onChange([...((selectedValue as string[]) || []), query]);
+  //     } else {
+  //       onChange(query);
+  //     }
+  //     return query;
+  //   };
+  // }
 
   let renderedSelect;
   if (multiple) {
     const multiSelectProps: MultiSelectProps = {
-      ...baseSelectProps,
+      leftSection: leftIcon,
+      label,
       value: selectedValue as string[],
       onChange: handleChangeMulti,
     };
-    renderedSelect = <MultiSelect {...multiSelectProps} />;
+    renderedSelect = <MultiSelect className="w-full" {...multiSelectProps} />;
   } else {
     const selectProps: SelectProps = {
-      ...baseSelectProps,
+      label,
+      leftSection: leftIcon,
       value: selectedValue as string,
       onChange: handleChangeSingle,
     };
-    renderedSelect = <Select {...(selectProps as any)} />;
+    renderedSelect = <Select className="w-full" {...(selectProps as any)} />;
   }
 
   return (
-    <div className={className}>
-      {label && (
-  <label
-    htmlFor={name}
-    style={{
-      fontSize: "0.75rem",
-      color: "#4B5563",
-      marginBottom: "0.25rem",
-      display: "block",
-      textAlign: "left",
-      fontWeight:"bold"
-    }}
-    title={label}
-  >
-    {label}
-  </label>
-)}
-
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "relative" }}>
-        {leftIcon && (
-          <div
-            style={{
-              position: "absolute",
-              left: "8px",
-              zIndex: 2,
-              pointerEvents: "none",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {leftIcon}
-          </div>
-        )}
+    <div className={'flex gap-2 items-end'}>
+     
         {renderedSelect}
         {showButton && !loading && (
-          <Button onClick={onButtonClick} disabled={disabled} style={{ fontSize: "0.75rem" }} title="اضافه کردن">
+          <Button
+            onClick={onButtonClick}
+            disabled={disabled}
+            title="اضافه کردن"
+          >
             ...
           </Button>
         )}
-      </div>
     </div>
   );
 };

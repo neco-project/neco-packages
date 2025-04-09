@@ -1,13 +1,12 @@
 // Consult.tsx
-import React, { useState } from 'react'
-import { Button } from '@mantine/core'
-import { IconProgressHelp, IconAlarm, IconCopy } from '@tabler/icons-react'
-import NumberInput from './NumberInput' // فرض کنید این کامپوننت شامل leftIcon و w-full است.
-import SelectOption, { Option } from './SelectOption'
-import Combobox from './ComboBox'
-import DataTable from '../TableDynamic/DataTable'
-import ModalSelector from './ModalSelector/Main'
-// import AdvancedDatePicker from './DatePicker'
+import React, { useState } from "react";
+import { Button } from "@mantine/core";
+import { IconProgressHelp, IconAlarm, IconCopy } from "@tabler/icons-react";
+import NumberInput from "./NumberInput"; // فرض کنید این کامپوننت شامل leftIcon و w-full است.
+import SelectOption, { Option } from "./SelectOption";
+import Combobox from "./ComboBox";
+import DataTable from "../TableDynamic/DataTable";
+import ModalSelector from "./ModalSelector/Main";
 
 // گزینه‌های نمونه برای "Consult with"
 const consultWithOptions: Option[] = [
@@ -25,15 +24,15 @@ const ccOptions: Option[] = [
 
 // آرایه ثابت دستورها (Instruction)
 const instructionOptions = [
-  'جهت تهیه پاسخ',
-  'جهت پیگیری',
-  'جهت اقدام مقتضی',
-  'جهت استحضار',
-  'جهت اخطار',
-  'درخواست راهنمایی',
-  'درخواست مشاوره',
-  'درخواست اعلام نظر'
-]
+  "جهت تهیه پاسخ",
+  "جهت پیگیری",
+  "جهت اقدام مقتضی",
+  "جهت استحضار",
+  "جهت اخطار",
+  "درخواست راهنمایی",
+  "درخواست مشاوره",
+  "درخواست اعلام نظر",
+];
 
 interface CCRow {
   id: string
@@ -82,18 +81,18 @@ const Consult: React.FC = () => {
     const newRow: CCRow = {
       id: Date.now().toString(),
       cc: ccValue,
-      instruction: ccInstruction
-    }
-    setCcRows(prev => [...prev, newRow])
-    setCcValue('')
-    setCcInstruction('')
-  }
+      instruction: ccInstruction,
+    };
+    setCcRows((prev) => [...prev, newRow]);
+    setCcValue("");
+    setCcInstruction("");
+  };
 
   const handleDeleteCCRow = () => {
-    if (selectedCcRows.length === 0) return
-    const idsToDelete = selectedCcRows.map(row => row.id)
-    setCcRows(prev => prev.filter(r => !idsToDelete.includes(r.id)))
-  }
+    if (selectedCcRows.length === 0) return;
+    const idsToDelete = selectedCcRows.map((row) => row.id);
+    setCcRows((prev) => prev.filter((r) => !idsToDelete.includes(r.id)));
+  };
 
   const onCCSelectionChanged = (rows: any[]) => {
     setSelectedCcRows(rows as CCRow[])
@@ -116,7 +115,7 @@ const Consult: React.FC = () => {
   }
 
   return (
-    <div className='w-full max-w-5xl mx-auto p-4 bg-white rounded shadow space-y-6'>
+    <div className="w-full  p-4 bg-white rounded shadow space-y-6">
       {/* نمایش ModalSelector */}
       <ModalSelector
         isOpen={isModalOpen}
@@ -149,8 +148,9 @@ const Consult: React.FC = () => {
         </p>
       </div>
 
-      <div className='flex flex-col md:flex-row gap-4'>
-        <div className='flex flex-col w-full md:w-1/2 gap-4'>
+      {/* ردیف اول: ستون چپ: "Consult with" + "Allowed Duration" (زیر هم) - ستون راست: "Consult Instruction" (Combobox) */}
+      <div className="flex  md:flex-row gap-4">
+        <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
             label='Consult with'
             name='consultWith'
@@ -161,24 +161,21 @@ const Consult: React.FC = () => {
             allowCustom
             showButton
             onButtonClick={openModal}
-            leftIcon={<IconProgressHelp size={18} />}
+            leftIcon={<IconProgressHelp />}
           />
           <NumberInput
             label='Allowed Duration (Days)'
             min={1}
             value={consultDuration}
-            onChange={val =>
-              setConsultDuration(typeof val === 'number' ? val : 1)
+            onChange={(val) =>
+              setConsultDuration(typeof val === "number" ? val : 1)
             }
-            hideControls
-            leftIcon={<IconAlarm size={18} />}
+            leftIcon={<IconAlarm />}
           />
         </div>
-        <div className='w-full md:w-1/2'>
-          <label className='block text-sm font-bold text-left mb-1'>
-            Consult Instruction
-          </label>
+        <div className="w-full md:w-1/2">
           <Combobox
+            label="Consult Instruction"
             options={instructionOptions}
             value={consultInstruction}
             onChange={setConsultInstruction}
@@ -211,11 +208,9 @@ const Consult: React.FC = () => {
             leftIcon={<IconAlarm size={18} />}
           />
         </div>
-        <div className='w-full md:w-1/2'>
-          <label className='block text-sm font-bold text-left mb-1'>
-            CC Instruction
-          </label>
+        <div className="w-full md:w-1/2">
           <Combobox
+            label="CC Instruction"
             options={instructionOptions}
             value={ccInstruction}
             onChange={setCcInstruction}
@@ -230,8 +225,8 @@ const Consult: React.FC = () => {
           Add
         </Button>
         <Button
-          variant='default'
-          color='red'
+          variant="default"
+          color="red"
           onClick={handleDeleteCCRow}
           disabled={selectedCcRows.length === 0}
         >
@@ -257,20 +252,20 @@ const Consult: React.FC = () => {
       />
 
       {/* دکمه‌های نهایی (Consult و Cancel) به صورت تمام عرض و کنار هم */}
-      <div className='flex gap-2'>
+      <div className="flex gap-2">
         <Button
           onClick={handleConsult}
-          variant='filled'
-          color='blue'
-          className='flex-1'
+          variant="filled"
+          color="blue"
+          className="flex-1"
         >
           Consult
         </Button>
         <Button
           onClick={handleCancel}
-          variant='outline'
-          color='gray'
-          className='flex-1'
+          variant="outline"
+          color="gray"
+          className="flex-1"
         >
           Cancel
         </Button>
