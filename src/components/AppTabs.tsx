@@ -1,6 +1,7 @@
 // components/AppTabs.tsx
 import { Tabs } from '@mantine/core'
 import Consult from './Consult'
+import ReAssign from './ReAssign'
 import { IconView360Arrow  , IconArrowForwardUp ,IconPlayerTrackNext} from '@tabler/icons-react'
 
 
@@ -24,7 +25,7 @@ export default function AppTabs() {
       </Tabs.Panel>
 
       <Tabs.Panel value="Reassign" pt="xs">
-        Reassign tab content
+        <ReAssign/>
       </Tabs.Panel>
 
       <Tabs.Panel value="Forward" pt="xs">
