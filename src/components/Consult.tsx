@@ -1,11 +1,7 @@
 // Consult.tsx
 import React, { useState } from "react";
 import { Button } from "@mantine/core";
-import {
-  IconProgressHelp,
-  IconAlarm,
-  IconCopy,
-} from "@tabler/icons-react";
+import { IconProgressHelp, IconAlarm, IconCopy } from "@tabler/icons-react";
 import NumberInput from "./NumberInput"; // فرض کنید این کامپوننت شامل leftIcon و w-full است.
 import SelectOption, { Option } from "./SelectOption";
 import Combobox from "./ComboBox";
@@ -28,14 +24,14 @@ const ccOptions: Option[] = [
 
 // آرایه ثابت دستورها (Instruction)
 const instructionOptions = [
-  'جهت تهیه پاسخ',
-  'جهت پیگیری',
-  'جهت اقدام مقتضی',
-  'جهت استحضار',
-  'جهت اخطار',
-  'درخواست راهنمایی',
-  'درخواست مشاوره',
-  'درخواست اعلام نظر',
+  "جهت تهیه پاسخ",
+  "جهت پیگیری",
+  "جهت اقدام مقتضی",
+  "جهت استحضار",
+  "جهت اخطار",
+  "درخواست راهنمایی",
+  "درخواست مشاوره",
+  "درخواست اعلام نظر",
 ];
 
 interface CCRow {
@@ -81,15 +77,15 @@ const Consult: React.FC = () => {
       cc: ccValue,
       instruction: ccInstruction,
     };
-    setCcRows(prev => [...prev, newRow]);
+    setCcRows((prev) => [...prev, newRow]);
     setCcValue("");
     setCcInstruction("");
   };
 
   const handleDeleteCCRow = () => {
     if (selectedCcRows.length === 0) return;
-    const idsToDelete = selectedCcRows.map(row => row.id);
-    setCcRows(prev => prev.filter(r => !idsToDelete.includes(r.id)));
+    const idsToDelete = selectedCcRows.map((row) => row.id);
+    setCcRows((prev) => prev.filter((r) => !idsToDelete.includes(r.id)));
   };
 
   const onCCSelectionChanged = (rows: any[]) => {
@@ -113,7 +109,7 @@ const Consult: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 bg-white rounded shadow space-y-6">
+    <div className="w-full  p-4 bg-white rounded shadow space-y-6">
       {/* نمایش ModalSelector */}
       <ModalSelector
         isOpen={isModalOpen}
@@ -127,12 +123,13 @@ const Consult: React.FC = () => {
           By consulting, you can ask others comments about this task.
         </p>
         <p>
-          The receiver can fill the form or leave a comment, but the task responsible is still you and only you can submit it finally.
+          The receiver can fill the form or leave a comment, but the task
+          responsible is still you and only you can submit it finally.
         </p>
       </div>
 
       {/* ردیف اول: ستون چپ: "Consult with" + "Allowed Duration" (زیر هم) - ستون راست: "Consult Instruction" (Combobox) */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex  md:flex-row gap-4">
         <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
             label="Consult with"
@@ -144,22 +141,21 @@ const Consult: React.FC = () => {
             allowCustom
             showButton
             onButtonClick={openModal}
-            leftIcon={<IconProgressHelp size={18} />}
+            leftIcon={<IconProgressHelp />}
           />
           <NumberInput
             label="Allowed Duration (Days)"
             min={1}
             value={consultDuration}
-            onChange={(val) => setConsultDuration(typeof val === "number" ? val : 1)}
-            hideControls
-            leftIcon={<IconAlarm size={18} />}
+            onChange={(val) =>
+              setConsultDuration(typeof val === "number" ? val : 1)
+            }
+            leftIcon={<IconAlarm />}
           />
         </div>
         <div className="w-full md:w-1/2">
-          <label className="block text-sm font-bold text-left mb-1">
-            Consult Instruction
-          </label>
           <Combobox
+            label="Consult Instruction"
             options={instructionOptions}
             value={consultInstruction}
             onChange={setConsultInstruction}
@@ -193,10 +189,8 @@ const Consult: React.FC = () => {
           />
         </div>
         <div className="w-full md:w-1/2">
-          <label className="block text-sm font-bold text-left mb-1">
-            CC Instruction
-          </label>
           <Combobox
+            label="CC Instruction"
             options={instructionOptions}
             value={ccInstruction}
             onChange={setCcInstruction}
@@ -210,7 +204,12 @@ const Consult: React.FC = () => {
         <Button variant="default" onClick={handleAddCCRow}>
           Add
         </Button>
-        <Button variant="default" color="red" onClick={handleDeleteCCRow} disabled={selectedCcRows.length === 0}>
+        <Button
+          variant="default"
+          color="red"
+          onClick={handleDeleteCCRow}
+          disabled={selectedCcRows.length === 0}
+        >
           Delete
         </Button>
       </div>
@@ -234,10 +233,20 @@ const Consult: React.FC = () => {
 
       {/* دکمه‌های نهایی (Consult و Cancel) به صورت تمام عرض و کنار هم */}
       <div className="flex gap-2">
-        <Button onClick={handleConsult} variant="filled" color="blue" className="flex-1">
+        <Button
+          onClick={handleConsult}
+          variant="filled"
+          color="blue"
+          className="flex-1"
+        >
           Consult
         </Button>
-        <Button onClick={handleCancel} variant="outline" color="gray" className="flex-1">
+        <Button
+          onClick={handleCancel}
+          variant="outline"
+          color="gray"
+          className="flex-1"
+        >
           Cancel
         </Button>
       </div>
