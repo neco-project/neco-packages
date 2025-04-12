@@ -68,6 +68,16 @@ const TableSelector: React.FC<TableSelectorProps> = ({
           showSearch
           // سایر پروپ‌های دلخواه به DataTable اضافه کنید...
         />
+        <div className="flex ">
+
+        <Button
+          onClick={handleSelectClick}
+          disabled={isSelectDisabled || !localSelectedRow}
+          style={{ width: "12rem" }}
+          >
+          Select
+        </Button>
+          </div>
       </div>
 
       {/* دکمه‌ی Select */}
