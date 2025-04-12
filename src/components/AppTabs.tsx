@@ -14,25 +14,25 @@ export default function AppTabs() {
   return (
     <Tabs color="red" variant="outline" defaultValue="Consult">
       <Tabs.List>
-        <Tabs.Tab value="Category" leftSection={<IconCategory stroke={2} />}>
+        <Tabs.Tab value="Category" leftSection={<IconCategory stroke={1} />}>
           Category
         </Tabs.Tab>
-        <Tabs.Tab value="FollowUp" leftSection={<IconFlag stroke={2} />}>
+        <Tabs.Tab value="FollowUp" leftSection={<IconFlag stroke={1} />}>
           FollowUp
         </Tabs.Tab>
-        <Tabs.Tab value="Alert" leftSection={<IconPlayerTrackNext stroke={2} />}>
+        <Tabs.Tab value="Alert" leftSection={<IconPlayerTrackNext stroke={1} />}>
           Alert
         </Tabs.Tab>
-        <Tabs.Tab value="Expedit" leftSection={<IconRotate stroke={2} />}>
+        <Tabs.Tab value="Expedit" leftSection={<IconRotate stroke={1} />}>
           Expedit
         </Tabs.Tab>
-        <Tabs.Tab value="Consult" leftSection={<IconView360Arrow stroke={2} />}>
+        <Tabs.Tab value="Consult" leftSection={<IconView360Arrow stroke={1} />}>
           Consult
         </Tabs.Tab>
-        <Tabs.Tab value="Reassign" leftSection={<IconArrowForwardUp stroke={2} />}>
+        <Tabs.Tab value="Reassign" leftSection={<IconArrowForwardUp stroke={1} />}>
           Reassign
         </Tabs.Tab>
-        <Tabs.Tab value="Forward" leftSection={<IconPlayerTrackNext stroke={2} />}>
+        <Tabs.Tab value="Forward" leftSection={<IconPlayerTrackNext stroke={1} />}>
           Forward
         </Tabs.Tab>
       </Tabs.List>
