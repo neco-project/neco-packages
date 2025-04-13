@@ -1,14 +1,20 @@
 // components/AppTabs.tsx
-import { Tabs } from '@mantine/core'
-import Consult from './Consult'
-import ReAssign from './ReAssign'
-import Forward from './Forward'
-import Category from './Category'
-import FollowUp from './Followup'
-import Alert from './Alert'
-import Expedit from './Expedit'
-import { IconView360Arrow  , IconArrowForwardUp ,IconPlayerTrackNext, IconCategory, IconFlag, IconRotate} from '@tabler/icons-react'
-
+import { Tabs } from "@mantine/core";
+import Consult from "./TaskManageMent/Consult";
+import ReAssign from "./TaskManageMent/ReAssign";
+import Forward from "./TaskManageMent/Forward";
+import Category from "./Category";
+import FollowUp from "./Followup";
+import Alert from "./Alert";
+import Expedit from "./Expedit";
+import {
+  IconView360Arrow,
+  IconArrowForwardUp,
+  IconPlayerTrackNext,
+  IconCategory,
+  IconFlag,
+  IconRotate,
+} from "@tabler/icons-react";
 
 export default function AppTabs() {
   return (
@@ -20,7 +26,10 @@ export default function AppTabs() {
         <Tabs.Tab value="FollowUp" leftSection={<IconFlag stroke={1} />}>
           FollowUp
         </Tabs.Tab>
-        <Tabs.Tab value="Alert" leftSection={<IconPlayerTrackNext stroke={1} />}>
+        <Tabs.Tab
+          value="Alert"
+          leftSection={<IconPlayerTrackNext stroke={1} />}
+        >
           Alert
         </Tabs.Tab>
         <Tabs.Tab value="Expedit" leftSection={<IconRotate stroke={1} />}>
@@ -29,10 +38,16 @@ export default function AppTabs() {
         <Tabs.Tab value="Consult" leftSection={<IconView360Arrow stroke={1} />}>
           Consult
         </Tabs.Tab>
-        <Tabs.Tab value="Reassign" leftSection={<IconArrowForwardUp stroke={1} />}>
+        <Tabs.Tab
+          value="Reassign"
+          leftSection={<IconArrowForwardUp stroke={1} />}
+        >
           Reassign
         </Tabs.Tab>
-        <Tabs.Tab value="Forward" leftSection={<IconPlayerTrackNext stroke={1} />}>
+        <Tabs.Tab
+          value="Forward"
+          leftSection={<IconPlayerTrackNext stroke={1} />}
+        >
           Forward
         </Tabs.Tab>
       </Tabs.List>
@@ -58,12 +73,12 @@ export default function AppTabs() {
       </Tabs.Panel>
 
       <Tabs.Panel value="Reassign" pt="xs">
-        <ReAssign/>
+        <ReAssign />
       </Tabs.Panel>
 
       <Tabs.Panel value="Forward" pt="xs">
-        <Forward/>
+        <Forward />
       </Tabs.Panel>
     </Tabs>
-  )
+  );
 }
