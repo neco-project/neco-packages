@@ -7,13 +7,14 @@ import SelectOption, { Option } from '../Common/SelectOption';
 import GenericCombobox from '../Common/ComboBox';
 import DataTable from '../Common/TableDynamic/DataTable';
 import ModalSelector from '../Common/ModalSelector/Main';
+import { DateTimePicker } from '@mantine/dates';
 
 
 
 const forwardToOptions: Option[] = [
-  { value: 'UserA', label: 'User A' },
-  { value: 'UserB', label: 'User B' },
-  { value: 'UserC', label: 'User C' }
+  { value: "UserA", label: "User A" },
+  { value: "UserB", label: "User B" },
+  { value: "UserC", label: "User C" },
 ];
 
 const instructionOptions: string[] = [
@@ -24,7 +25,7 @@ const instructionOptions: string[] = [
   "جهت اخطار",
   "درخواست راهنمایی",
   "درخواست مشاوره",
-  "درخواست اعلام نظر"
+  "درخواست اعلام نظر",
 ];
 
 interface CCRow {
@@ -34,18 +35,18 @@ interface CCRow {
 }
 
 const Forward: React.FC = () => {
-  const [forward, setForward] = useState<string>('');
-  const [forwardTo, setForwardTo] = useState<string>('');
+  const [forward, setForward] = useState<string>("");
+  const [forwardTo, setForwardTo] = useState<string>("");
   const [allowedDuration, setAllowedDuration] = useState<number>(3);
   const [forwardDate, setForwardDate] = useState<Date | null>(null);
   const [calendarModalOpen, setCalendarModalOpen] = useState<boolean>(false);
-  const [ccValue, setCcValue] = useState<string>('');
+  const [ccValue, setCcValue] = useState<string>("");
   const [ccDuration, setCcDuration] = useState<number>(3);
-  const [ccInstruction, setCcInstruction] = useState<string>('');
+  const [ccInstruction, setCcInstruction] = useState<string>("");
   const [ccRows, setCcRows] = useState<CCRow[]>([]);
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [comment, setComment] = useState<string>('');
+  const [comment, setComment] = useState<string>("");
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -61,17 +62,17 @@ const Forward: React.FC = () => {
     const newRow: CCRow = {
       id: Date.now().toString(),
       cc: ccValue,
-      instruction: ccInstruction
+      instruction: ccInstruction,
     };
-    setCcRows(prev => [...prev, newRow]);
-    setCcValue('');
-    setCcInstruction('');
+    setCcRows((prev) => [...prev, newRow]);
+    setCcValue("");
+    setCcInstruction("");
   };
 
   const handleDeleteCCRow = () => {
     if (selectedCcRows.length === 0) return;
-    const idsToDelete = selectedCcRows.map(row => row.id);
-    setCcRows(prev => prev.filter(r => !idsToDelete.includes(r.id)));
+    const idsToDelete = selectedCcRows.map((row) => row.id);
+    setCcRows((prev) => prev.filter((r) => !idsToDelete.includes(r.id)));
   };
 
   const onCCSelectionChanged = (rows: any[]) => {
@@ -79,21 +80,21 @@ const Forward: React.FC = () => {
   };
 
   const handleCCRowDoubleClick = (data: any) => {
-    console.log('Double clicked row =>', data);
+    console.log("Double clicked row =>", data);
   };
 
   const handleForward = () => {
-    console.log('Forward:', forward);
-    console.log('Forward To:', forwardTo);
-    console.log('Allowed Duration:', allowedDuration);
-    console.log('Forward Date:', forwardDate);
-    console.log('Enter Your Comment:', comment);
-    console.log('CC:', ccRows);
-    console.log('CC Duration:', ccDuration);
+    console.log("Forward:", forward);
+    console.log("Forward To:", forwardTo);
+    console.log("Allowed Duration:", allowedDuration);
+    console.log("Forward Date:", forwardDate);
+    console.log("Enter Your Comment:", comment);
+    console.log("CC:", ccRows);
+    console.log("CC Duration:", ccDuration);
   };
 
   const handleCancel = () => {
-    console.log('Cancel clicked');
+    console.log("Cancel clicked");
   };
 
   return (
@@ -111,7 +112,7 @@ const Forward: React.FC = () => {
         <AdvancedDatePicker
           controlled
           value={forwardDate}
-          onChange={val => {
+          onChange={(val) => {
             if (val instanceof Date) {
               setForwardDate(val);
               setCalendarModalOpen(false);
@@ -120,14 +121,17 @@ const Forward: React.FC = () => {
         />
       </Modal>
       <div className="mb-4">
-        <label className="block text-sm font-bold text-left mb-1">Select Date</label>
+        <label className="block text-sm font-bold text-left mb-1">
+          Select Date
+        </label>
       </div>
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
           By forwarding, you can ask others comments about this task.
         </p>
         <p>
-          The receiver can fill the form or leave a comment, but the task responsible is still you and only you can submit it finally.
+          The receiver can fill the form or leave a comment, but the task
+          responsible is still you and only you can submit it finally.
         </p>
       </div>
 
@@ -139,26 +143,17 @@ const Forward: React.FC = () => {
             label="From"
             placeholder="From ..."
             value={forward}
-            onChange={e => setForward(e.currentTarget.value)}
-            leftIcon={<IconUser />}
+            onChange={(e) => setForward(e.currentTarget.value)}
+            leftIcon={<IconUser stroke={1} />}
           />
         </div>
         <div className="w-full md:w-1/2">
-          <Input
-            inputType="text"
+          <DateTimePicker
             label="Select Date"
-            placeholder="Select date..."
-            value={forwardDate ? forwardDate.toLocaleDateString() : ''}
-            leftSection={
-              <div
-                onClick={() => setCalendarModalOpen(true)}
-                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', height: '100%' }}
-              >
-                <IconCalendarTime size={18} />
-              </div>
-            }
-            className="w-full"
-            readOnly
+            placeholder="Pick date and time"
+            value={forwardDate}
+            onChange={setForwardDate}
+            leftSection={<IconCalendarTime stroke={1} />}
           />
         </div>
       </div>
@@ -171,8 +166,8 @@ const Forward: React.FC = () => {
             name="forwardTo"
             options={forwardToOptions}
             selectedValue={forwardTo}
-            onChange={val => setForwardTo(val as string)}
-            leftIcon={<IconArrowRight size={18} />}
+            onChange={(val) => setForwardTo(val as string)}
+            leftIcon={<IconArrowRight stroke={1} />}
             showButton
             onButtonClick={openModal}
           />
@@ -183,7 +178,9 @@ const Forward: React.FC = () => {
             label="Allowed Duration"
             placeholder="Enter allowed duration..."
             value={allowedDuration}
-            onChange={val => setAllowedDuration(typeof val === 'number' ? val : 0)}
+            onChange={(val) =>
+              setAllowedDuration(typeof val === "number" ? val : 0)
+            }
             leftIcon={<IconAlarm />}
           />
         </div>
@@ -202,15 +199,22 @@ const Forward: React.FC = () => {
 
       {/* CC section */}
       <div className="flex items-center gap-2">
-        <Button variant="default" onClick={handleAddCCRow}>Add</Button>
-        <Button variant="default" color="red" onClick={handleDeleteCCRow} disabled={selectedCcRows.length === 0}>
+        <Button variant="default" onClick={handleAddCCRow}>
+          Add
+        </Button>
+        <Button
+          variant="default"
+          color="red"
+          onClick={handleDeleteCCRow}
+          disabled={selectedCcRows.length === 0}
+        >
           Delete
         </Button>
       </div>
       <DataTable
         columnDefs={[
-          { headerName: 'CC', field: 'cc', sortable: true },
-          { headerName: 'Instruction', field: 'instruction', sortable: true }
+          { headerName: "CC", field: "cc", sortable: true },
+          { headerName: "Instruction", field: "instruction", sortable: true },
         ]}
         rowData={ccRows}
         rowSelectionType="multiple"
@@ -228,10 +232,20 @@ const Forward: React.FC = () => {
 
       {/* Final action buttons */}
       <div className="flex gap-2">
-        <Button onClick={handleForward} variant="filled" color="blue" className="flex-1">
+        <Button
+          onClick={handleForward}
+          variant="filled"
+          color="blue"
+          className="flex-1"
+        >
           Forward
         </Button>
-        <Button onClick={handleCancel} variant="outline" color="gray" className="flex-1">
+        <Button
+          onClick={handleCancel}
+          variant="outline"
+          color="gray"
+          className="flex-1"
+        >
           Cancel
         </Button>
       </div>

@@ -93,7 +93,7 @@ const Reassign: React.FC = () => {
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 bg-white rounded shadow space-y-6">
+    <div className="w-full mx-auto p-4 bg-white rounded shadow space-y-6">
       <ModalSelector isOpen={isModalOpen} onClose={closeModal} onSelect={handleModalSelect} />
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
@@ -115,7 +115,7 @@ const Reassign: React.FC = () => {
             allowCustom
             showButton
             onButtonClick={openModal}
-            leftIcon={<IconProgressHelp size={18} />}
+            leftIcon={<IconProgressHelp stroke={1} />}
           />
           <Input
             inputType="number"
@@ -125,7 +125,7 @@ const Reassign: React.FC = () => {
             onChange={(val) =>
               setConsultDuration(typeof val === "number" ? val : 1)
             }
-            leftIcon={<IconAlarm size={18} />}
+            leftIcon={<IconAlarm stroke={1} />}
           />
         </div>
         <div className="w-full md:w-1/2">
@@ -153,7 +153,7 @@ const Reassign: React.FC = () => {
             allowCustom
             showButton
             onButtonClick={openModal}
-            leftIcon={<IconCopy size={18} />}
+            leftIcon={<IconCopy stroke={1} />}
           />
           <Input
             inputType="number"
@@ -163,7 +163,7 @@ const Reassign: React.FC = () => {
             onChange={(val) =>
               setCcDuration(typeof val === "number" ? val : 1)
             }
-            leftIcon={<IconAlarm size={18} />}
+            leftIcon={<IconAlarm stroke={1} />}
           />
         </div>
         <div className="w-full md:w-1/2">
