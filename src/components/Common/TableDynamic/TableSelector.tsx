@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DataTable from "../TableDynamic/DataTable";
+import DataTable from "./DataTable";
 import { Button } from "@mantine/core";
 
 export interface ColumnDef {

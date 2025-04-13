@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Button } from "@mantine/core";
 import { IconProgressHelp, IconAlarm, IconCopy } from "@tabler/icons-react";
-import Input from "./InputComponent";
-import SelectOption, { Option } from "./SelectOption";
-import Combobox from "./ComboBox";
-import DataTable from "../TableDynamic/DataTable";
-import ModalSelector from "./ModalSelector/Main";
+import Input from "../Common/InputComponent";
+import SelectOption, { Option } from "../Common/SelectOption";
+import Combobox from "../Common/ComboBox";
+import DataTable from "../Common/TableDynamic/DataTable";
+import ModalSelector from "../Common/ModalSelector/Main";
 
 const consultWithOptions: Option[] = [
   { value: "PersonA", label: "Person A" },

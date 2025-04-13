@@ -1,6 +1,6 @@
 // RoleGroupPostPicker.tsx
 import React, { useState } from "react";
-import DataTable from "../../TableDynamic/DataTable";
+import DataTable from "../TableDynamic/DataTable";
 import { Button, Loader } from "@mantine/core";
 import { SelectedItem } from "./MembersTable"; // یا تعریف مجدد
 

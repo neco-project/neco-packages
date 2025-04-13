@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Modal } from '@mantine/core';
 import { IconCalendarTime, IconUser , IconAlarm,IconArrowRight } from '@tabler/icons-react';
-import Input from './InputComponent';
-import AdvancedDatePicker from './DatePicker';
-import SelectOption, { Option } from './SelectOption';
-import GenericCombobox from './ComboBox';
-import DataTable from '../TableDynamic/DataTable';
-import ModalSelector from './ModalSelector/Main';
+import Input from '../Common/InputComponent';
+import AdvancedDatePicker from '../Common/DatePicker';
+import SelectOption, { Option } from '../Common/SelectOption';
+import GenericCombobox from '../Common/ComboBox';
+import DataTable from '../Common/TableDynamic/DataTable';
+import ModalSelector from '../Common/ModalSelector/Main';
 
 
 

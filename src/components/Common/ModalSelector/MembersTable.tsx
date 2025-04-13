@@ -1,6 +1,6 @@
 // MembersTable.tsx
 import React, { useState } from "react";
-import DataTable from "../../TableDynamic/DataTable";
+import DataTable from "../TableDynamic/DataTable";
 import { Button, Loader } from "@mantine/core";
 
 /** نوع داده منتخب */

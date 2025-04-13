@@ -1,6 +1,6 @@
 
 import './App.css'
-import AppTabs from './components/AppTabs'
+import AppTabs from './components/Common/Tabs/AppTabs'
 
 function App () {
 
