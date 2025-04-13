@@ -14,7 +14,7 @@ import DynamicModal from "../components/Modal";
 import AdvancedDatePicker from "../components/DatePicker";
 import { IconDots, IconCalendarEvent } from "@tabler/icons-react";
 
-const AlertPanel = () => {
+const Alert = () => {
   const [isTimeBased, setIsTimeBased] = useState(true);
   const [timeField, setTimeField] = useState<string>();
   const [duration, setDuration] = useState<string>();
@@ -51,8 +51,6 @@ const AlertPanel = () => {
     { value: "email", label: "Email" },
   ];
 
-  const handleDoubleClick = (row: any) => {};
-
   const handleDeleteClick = (row: any) => {
     alert("Deleted: " + row.name);
   };
@@ -83,16 +81,11 @@ const AlertPanel = () => {
         rowData={alerts}
         onDeleteButtonClick={handleDeleteAlert}
         isSelectDisabled={true}
-        height={300}
+        height={500}
         onRowDoubleClick={(e) => handleDeleteClick(e)}
       />
-      <div className="flex justify-end mt-2">
-        <Button color="red" variant="light">
-          Delete
-        </Button>
-      </div>
 
-      <AccordionComponent headerOpen=" ">
+      <AccordionComponent header="New">
         <GridComponent header="Alert schedule" gridCols={3}>
           <Radio
             name="alertType"
@@ -133,41 +126,47 @@ const AlertPanel = () => {
           />
         </GridComponent>
 
-        <GridComponent header="Notification information" gridCols={2}>
-          <div>
-            <NativeSelect
-              label="Receiver"
-              data={receivers}
-              onChange={(e) => setReceiver(e.target.value)}
-            />
-            <div className="flex items-center gap-2 my-2">
+        <GridComponent
+          header="Notification information"
+          gridCols={2}
+          gridRows={1}
+        >
+          <div className="w-full">
+            <div className="flex items-end gap-1">
+              <div className="w-full">
+                <NativeSelect
+                  label="Receiver"
+                  data={receivers}
+                  onChange={(e) => setReceiver(e.target.value)}
+                />
+              </div>
               <ActionIcon variant="default" color="blue">
                 <IconDots size={20} />
               </ActionIcon>
-              <Textarea
-                placeholder="Alert text"
-                value={alertText}
-                onChange={(e) => setAlertText(e.target.value)}
-                maxLength={350}
-                autosize
-                minRows={2}
-              />
             </div>
             <NativeSelect
               label="Sending channel"
               data={channels}
               onChange={(e) => setSendingChannel(e.target.value)}
             />
+            <div className="flex gap-2 pt-6">
+              <Button fullWidth onClick={handleAddAlert}>
+                Add
+              </Button>
+              <Button fullWidth variant="outline">
+                Cancel
+              </Button>
+            </div>
           </div>
 
-          <div className="flex gap-2 pt-6">
-            <Button fullWidth onClick={handleAddAlert}>
-              Add
-            </Button>
-            <Button fullWidth variant="outline">
-              Cancel
-            </Button>
-          </div>
+          <Textarea
+            placeholder="Alert text"
+            value={alertText}
+            onChange={(e) => setAlertText(e.target.value)}
+            maxLength={350}
+            autosize
+            minRows={2}
+          />
         </GridComponent>
       </AccordionComponent>
 
@@ -191,4 +190,4 @@ const AlertPanel = () => {
   );
 };
 
-export default AlertPanel;
+export default Alert;

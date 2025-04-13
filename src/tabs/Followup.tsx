@@ -116,7 +116,7 @@ const FollowUp = () => {
         height={500}
       />
 
-      <AccordionComponent headerOpen={"New"}>
+      <AccordionComponent header={"New"}>
         <GridComponent header={"Follow up schedule"}>
           <Radio
             name="dateType"

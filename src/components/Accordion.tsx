@@ -2,11 +2,11 @@ import { Accordion } from "@mantine/core";
 import React from "react";
 
 interface AccordionComponentProps {
-  headerOpen: String;
+  header: String;
   children: any;
 }
 const AccordionComponent: React.FC<AccordionComponentProps> = ({
-  headerOpen,
+  header: headerOpen,
   children,
 }) => {
   return (
