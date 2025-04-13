@@ -20,6 +20,7 @@ export default function AppTabs() {
   return (
     <Tabs color="red" variant="outline" defaultValue="FollowUp">
       <Tabs.List>
+        اثممخ
         <Tabs.Tab value="Category" leftSection={<IconCategory stroke={1} />}>
           Category
         </Tabs.Tab>
