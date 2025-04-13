@@ -3,10 +3,10 @@ import { Tabs } from "@mantine/core";
 import Consult from "./TaskManageMent/Consult";
 import ReAssign from "./TaskManageMent/ReAssign";
 import Forward from "./TaskManageMent/Forward";
-import Category from "./Category";
-import FollowUp from "./Followup";
-import Alert from "./Alert";
-import Expedit from "./Expedit";
+import Category from "./TaskManageMent/Category";
+import FollowUp from "./TaskManageMent/Followup";
+import Alert from "./TaskManageMent/Alert";
+import Expedit from "./TaskManageMent/Expedit";
 import {
   IconView360Arrow,
   IconArrowForwardUp,
@@ -18,7 +18,7 @@ import {
 
 export default function AppTabs() {
   return (
-    <Tabs color="red" variant="outline" defaultValue="Consult">
+    <Tabs color="red" variant="outline" defaultValue="FollowUp">
       <Tabs.List>
         <Tabs.Tab value="Category" leftSection={<IconCategory stroke={1} />}>
           Category
@@ -28,7 +28,7 @@ export default function AppTabs() {
         </Tabs.Tab>
         <Tabs.Tab
           value="Alert"
-          leftSection={<IconPlayerTrackNext stroke={1} />}
+          leftSection={<IconPlayerTrackNext stroke={2} />}
         >
           Alert
         </Tabs.Tab>
@@ -40,13 +40,13 @@ export default function AppTabs() {
         </Tabs.Tab>
         <Tabs.Tab
           value="Reassign"
-          leftSection={<IconArrowForwardUp stroke={1} />}
+          leftSection={<IconArrowForwardUp stroke={2} />}
         >
           Reassign
         </Tabs.Tab>
         <Tabs.Tab
           value="Forward"
-          leftSection={<IconPlayerTrackNext stroke={1} />}
+          leftSection={<IconPlayerTrackNext stroke={2} />}
         >
           Forward
         </Tabs.Tab>

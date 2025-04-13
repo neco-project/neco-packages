@@ -1,14 +1,12 @@
+import "./App.css";
+import AppTabs from "./components/Common/Tabs/AppTabs";
 
-import './App.css'
-import AppTabs from './components/Common/Tabs/AppTabs'
-
-function App () {
-
+function App() {
   return (
     <>
-     <AppTabs />
+      <AppTabs />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
