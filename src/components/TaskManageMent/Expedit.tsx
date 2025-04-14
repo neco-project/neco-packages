@@ -11,6 +11,7 @@ import { IconDots, IconSearch } from "@tabler/icons-react";
 import AccordionComponent from "../Accordion";
 import GridComponent from "../GridComponent";
 import TableSelector from "../Common/TableDynamic/TableSelector";
+import ModalSelector from "../Common/ModalSelector/Main";
 
 const Expedit = () => {
   const [selectedExpeditor, setSelectedExpeditor] = useState<string>("");
@@ -19,7 +20,17 @@ const Expedit = () => {
   const [isActive, setIsActive] = useState<boolean>(true);
   const [expedites, setExpedites] = useState<any[]>([]);
 
-  const [accordionOpen, setAccordionOpen] = useState(true);
+  const [isModalOpen, setIsOpenModal] = useState(false);
+  // const [accordionOpen, setAccordionOpen] = useState(true);
+
+  const closeModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const handleModalSelect = () => {
+    alert("Selected");
+    setIsOpenModal(false);
+  };
 
   const expeditorOptions = [
     { value: "john", label: "John" },
@@ -54,6 +65,11 @@ const Expedit = () => {
 
   return (
     <div className="p-4 w-full bg-white rounded shadow">
+      <ModalSelector
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSelect={handleModalSelect}
+      />
       <h2 className="text-sm font-semibold mb-1">Existing Expedites:</h2>
 
       <TableSelector
@@ -64,21 +80,11 @@ const Expedit = () => {
           { headerName: "State", field: "state" },
         ]}
         rowData={expedites}
-        height={250}
+        height={500}
         onDeleteButtonClick={handleDelete}
         isSelectDisabled={true}
         onRowDoubleClick={(e: any) => handleOnDoubleClick(e)}
       />
-
-      <div className="flex justify-end mt-2">
-        <Button
-          color="gray"
-          variant="light"
-          className="bg-purple-100 text-purple-600"
-        >
-          Delete
-        </Button>
-      </div>
 
       <AccordionComponent header="New">
         <GridComponent gridCols={2} gridRows={1}>
@@ -93,7 +99,7 @@ const Expedit = () => {
                     onChange={(e) => setSelectedExpeditor(e.target.value)}
                   />
                 </div>
-                <ActionIcon color="blue">
+                <ActionIcon color="blue" onClick={() => setIsOpenModal(true)}>
                   <IconDots size={20} />
                 </ActionIcon>
               </div>

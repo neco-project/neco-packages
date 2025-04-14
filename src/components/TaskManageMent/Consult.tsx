@@ -10,13 +10,13 @@ import ModalSelector from "../Common/ModalSelector/Main";
 const consultWithOptions: Option[] = [
   { value: "PersonA", label: "Person A" },
   { value: "PersonB", label: "Person B" },
-  { value: "PersonC", label: "Person C" }
+  { value: "PersonC", label: "Person C" },
 ];
 
 const ccOptions: Option[] = [
   { value: "CCUser1", label: "CC User 1" },
   { value: "CCUser2", label: "CC User 2" },
-  { value: "CCUser3", label: "CC User 3" }
+  { value: "CCUser3", label: "CC User 3" },
 ];
 
 const instructionOptions = [
@@ -27,7 +27,7 @@ const instructionOptions = [
   "جهت اخطار",
   "درخواست راهنمایی",
   "درخواست مشاوره",
-  "درخواست اعلام نظر"
+  "درخواست اعلام نظر",
 ];
 
 interface CCRow {
@@ -49,11 +49,13 @@ const Consult: React.FC = () => {
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
 
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [selectedDateRange, setSelectedDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    [Date | null, Date | null]
+  >([null, null]);
 
   const ccColumnDefs = [
     { headerName: "CC", field: "cc", sortable: true },
-    { headerName: "Instruction", field: "instruction", sortable: true }
+    { headerName: "Instruction", field: "instruction", sortable: true },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -71,7 +73,7 @@ const Consult: React.FC = () => {
     const newRow: CCRow = {
       id: Date.now().toString(),
       cc: ccValue,
-      instruction: ccInstruction
+      instruction: ccInstruction,
     };
     setCcRows((prev) => [...prev, newRow]);
     setCcValue("");
@@ -106,16 +108,23 @@ const Consult: React.FC = () => {
 
   return (
     <div className="w-full p-4 bg-white rounded shadow space-y-6">
-      <ModalSelector isOpen={isModalOpen} onClose={closeModal} onSelect={handleModalSelect} />
+      <ModalSelector
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSelect={handleModalSelect}
+      />
       <div className="mb-4">
-        <label className="block text-sm font-bold text-left mb-1">Select Date</label>
+        <label className="block text-sm font-bold text-left mb-1">
+          Select Date
+        </label>
       </div>
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
           By consulting, you can ask others comments about this task.
         </p>
         <p>
-          The receiver can fill the form or leave a comment, but the task responsible is still you and only you can submit it finally.
+          The receiver can fill the form or leave a comment, but the task
+          responsible is still you and only you can submit it finally.
         </p>
       </div>
       <div className="flex md:flex-row gap-4">
@@ -137,7 +146,9 @@ const Consult: React.FC = () => {
             label="Allowed Duration (Days)"
             min={1}
             value={consultDuration}
-            onChange={(val) => setConsultDuration(typeof val === "number" ? val : 1)}
+            onChange={(val) =>
+              setConsultDuration(typeof val === "number" ? val : 1)
+            }
             leftIcon={<IconAlarm />}
           />
         </div>
@@ -188,7 +199,12 @@ const Consult: React.FC = () => {
         <Button variant="default" onClick={handleAddCCRow}>
           Add
         </Button>
-        <Button variant="default" color="red" onClick={handleDeleteCCRow} disabled={selectedCcRows.length === 0}>
+        <Button
+          variant="default"
+          color="red"
+          onClick={handleDeleteCCRow}
+          disabled={selectedCcRows.length === 0}
+        >
           Delete
         </Button>
       </div>
@@ -208,10 +224,20 @@ const Consult: React.FC = () => {
         onDuplicate={() => {}}
       />
       <div className="flex gap-2">
-        <Button onClick={handleConsult} variant="filled" color="blue" className="flex-1">
+        <Button
+          onClick={handleConsult}
+          variant="filled"
+          color="blue"
+          className="flex-1"
+        >
           Consult
         </Button>
-        <Button onClick={handleCancel} variant="outline" color="gray" className="flex-1">
+        <Button
+          onClick={handleCancel}
+          variant="outline"
+          color="gray"
+          className="flex-1"
+        >
           Cancel
         </Button>
       </div>

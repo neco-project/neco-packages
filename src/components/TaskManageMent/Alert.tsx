@@ -13,6 +13,7 @@ import DynamicModal from "../Common/Modal";
 import AdvancedDatePicker from "../Common/DatePicker";
 import { IconDots, IconCalendarEvent } from "@tabler/icons-react";
 import InputComponent from "../Common/InputComponent";
+import ModalSelector from "../Common/ModalSelector/Main";
 
 const Alert = () => {
   const [isTimeBased, setIsTimeBased] = useState(true);
@@ -35,6 +36,17 @@ const Alert = () => {
   ];
 
   const [alerts, setAlerts] = useState<any[]>([]);
+
+  const [isModalOpen, setIsOpenModal] = useState(false);
+
+  const closeModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const handleModalSelect = () => {
+    alert("Selected");
+    setIsOpenModal(false);
+  };
 
   const timeFields = [
     { value: "created", label: "Created Date" },
@@ -75,6 +87,11 @@ const Alert = () => {
 
   return (
     <div className="p-4 bg-white rounded shadow w-full">
+      <ModalSelector
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSelect={handleModalSelect}
+      />
       <h1 className="text-sm font-semibold mb-2">Existing Alerts:</h1>
       <TableSelector
         columnDefs={alertColumns}
@@ -140,7 +157,7 @@ const Alert = () => {
                   onChange={(e) => setReceiver(e.target.value)}
                 />
               </div>
-              <ActionIcon variant="default" color="blue">
+              <ActionIcon color="blue" onClick={() => setIsOpenModal(true)}>
                 <IconDots size={20} />
               </ActionIcon>
             </div>

@@ -21,10 +21,10 @@ export default function AppTabs() {
   return (
     <Tabs color="red" variant="outline" defaultValue="FollowUp">
       <Tabs.List>
-        <Tabs.Tab value="Category" leftSection={<IconCategory stroke={1} />}>
+        <Tabs.Tab value="Category" leftSection={<IconCategory stroke={2} />}>
           Category
         </Tabs.Tab>
-        <Tabs.Tab value="FollowUp" leftSection={<IconFlag stroke={1} />}>
+        <Tabs.Tab value="FollowUp" leftSection={<IconFlag stroke={2} />}>
           FollowUp
         </Tabs.Tab>
         <Tabs.Tab
@@ -33,10 +33,10 @@ export default function AppTabs() {
         >
           Alert
         </Tabs.Tab>
-        <Tabs.Tab value="Expedit" leftSection={<IconRotate stroke={1} />}>
+        <Tabs.Tab value="Expedit" leftSection={<IconRotate stroke={2} />}>
           Expedit
         </Tabs.Tab>
-        <Tabs.Tab value="Consult" leftSection={<IconView360Arrow stroke={1} />}>
+        <Tabs.Tab value="Consult" leftSection={<IconView360Arrow stroke={2} />}>
           Consult
         </Tabs.Tab>
         <Tabs.Tab
