@@ -25,6 +25,8 @@ export interface TableSelectorProps {
 
   onDeleteButtonClick?: (data: any) => void;
 
+  onAssign?: (data: any) => void;
+
   // تعیین فعال/غیرفعال بودن دکمه Select
   isSelectDisabled?: boolean;
 
@@ -39,6 +41,7 @@ const TableSelector: React.FC<TableSelectorProps> = ({
   onRowClick,
   onSelectButtonClick,
   onDeleteButtonClick,
+  onAssign,
   isSelectDisabled = false,
   isDeleteDisabled = false,
 }) => {
@@ -90,8 +93,13 @@ const TableSelector: React.FC<TableSelectorProps> = ({
           // سایر پروپ‌های دلخواه به DataTable اضافه کنید...
         />
 
-        {onDeleteButtonClick && (
-          <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {onAssign && (
+            <Button style={{ width: "12rem" }} onClick={onAssign}>
+              Assign
+            </Button>
+          )}
+          {onDeleteButtonClick && (
             <Button
               onClick={handleDeleteClick}
               disabled={isSelectDisabled || !localSelectedRow}
@@ -99,22 +107,18 @@ const TableSelector: React.FC<TableSelectorProps> = ({
             >
               Delete
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* دکمه‌ی Select */}
-      {onSelectButtonClick && (
-        <div className="mt-4 flex justify-center">
-          <Button
-            onClick={handleSelectClick}
-            disabled={isDeleteDisabled || !localSelectedRow}
-            style={{ width: "12rem" }}
-          >
+      <div className="mt-4 flex justify-center">
+        {onSelectButtonClick && (
+          <Button onClick={handleSelectClick} style={{ width: "12rem" }}>
             Select
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
