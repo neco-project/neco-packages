@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import { Button, Modal } from '@mantine/core';
-import { IconCalendarTime, IconUser , IconAlarm,IconArrowRight } from '@tabler/icons-react';
-import Input from '../Common/InputComponent';
-import AdvancedDatePicker from '../Common/DatePicker';
-import SelectOption, { Option } from '../Common/SelectOption';
-import GenericCombobox from '../Common/ComboBox';
-import DataTable from '../Common/TableDynamic/DataTable';
-import ModalSelector from '../Common/ModalSelector/Main';
-import { DateTimePicker } from '@mantine/dates';
-
-
+import React, { useState } from "react";
+import { Button, Modal } from "@mantine/core";
+import {
+  IconCalendarTime,
+  IconUser,
+  IconAlarm,
+  IconArrowRight,
+} from "@tabler/icons-react";
+import Input from "../Common/InputComponent";
+import AdvancedDatePicker from "../Common/DatePicker";
+import SelectOption, { Option } from "../Common/SelectOption";
+import GenericCombobox from "../Common/ComboBox";
+import DataTable from "../Common/TableDynamic/DataTable";
+import { DateTimePicker } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import RolePickerTabs from "../Common/RolesGroups/RolePickerTabs";
 
 const forwardToOptions: Option[] = [
   { value: "UserA", label: "User A" },
@@ -39,17 +43,21 @@ const Forward: React.FC = () => {
   const [forwardTo, setForwardTo] = useState<string>("");
   const [allowedDuration, setAllowedDuration] = useState<number>(3);
   const [forwardDate, setForwardDate] = useState<Date | null>(null);
-  const [calendarModalOpen, setCalendarModalOpen] = useState<boolean>(false);
   const [ccValue, setCcValue] = useState<string>("");
   const [ccDuration, setCcDuration] = useState<number>(3);
   const [ccInstruction, setCcInstruction] = useState<string>("");
   const [ccRows, setCcRows] = useState<CCRow[]>([]);
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // مدیریت مودال انتخاب "Forward To" با useDisclosure
+  const [modalOpened, { open: openModal, close: closeModal }] =
+    useDisclosure(false);
+  // اگر بخواهید از مودال تاریخ سفارشی استفاده کنید:
+  const [calendarModalOpened, { open: openCalendarModal, close: closeCalendarModal }] =
+    useDisclosure(false);
+
+  // تابع انتخاب در مودال: مقدار selectedForwardTo به‌روز می‌شود.
   const handleModalSelect = (selected: any[]) => {
     if (selected.length > 0) {
       setForwardTo(selected[0].name);
@@ -99,14 +107,15 @@ const Forward: React.FC = () => {
 
   return (
     <div className="w-full p-4 bg-white rounded shadow space-y-6">
-      <ModalSelector
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSelect={handleModalSelect}
-      />
+      {/* مودال انتخاب "Forward To" */}
+      <Modal opened={modalOpened} onClose={closeModal} withCloseButton={false}>
+        <RolePickerTabs onSelect={handleModalSelect} onClose={closeModal} />
+      </Modal>
+
+      {/* مودال تاریخ (در صورت استفاده از AdvancedDatePicker به جای DateTimePicker) */}
       <Modal
-        opened={calendarModalOpen}
-        onClose={() => setCalendarModalOpen(false)}
+        opened={calendarModalOpened}
+        onClose={closeCalendarModal}
         title="Select Date"
       >
         <AdvancedDatePicker
@@ -115,11 +124,12 @@ const Forward: React.FC = () => {
           onChange={(val) => {
             if (val instanceof Date) {
               setForwardDate(val);
-              setCalendarModalOpen(false);
+              closeCalendarModal();
             }
           }}
         />
       </Modal>
+
       <div className="mb-4">
         <label className="block text-sm font-bold text-left mb-1">
           Select Date
@@ -154,6 +164,8 @@ const Forward: React.FC = () => {
             value={forwardDate}
             onChange={setForwardDate}
             leftSection={<IconCalendarTime stroke={1} />}
+            /* در صورت تمایل می‌توانید به جای DateTimePicker از مودال تاریخ سفارشی استفاده کنید:
+            onClick={() => openCalendarModal()} */
           />
         </div>
       </div>

@@ -1,197 +1,217 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TableSelector from "../Common/TableDynamic/TableSelector";
-import {
-  Accordion,
-  ActionIcon,
-  Button,
-  NativeSelect,
-  Radio,
-} from "@mantine/core";
-import GridComponent from "../GridComponent";
-import InputComponent from "../Common/InputComponent";
-import AdvancedDatePicker from "../Common/DatePicker";
-import DynamicModal from "../Common/Modal";
-import { IconCalendarEvent } from "@tabler/icons-react";
+import { Accordion, Button, Radio } from "@mantine/core";
+import Input from "../Common/InputComponent"; // کامپوننت Input (پشتیبانی از text)
+import { DateTimePicker } from "@mantine/dates";
 import AccordionComponent from "../Accordion";
+import { IconCalendarTime } from "@tabler/icons-react";
+import SelectOption, { Option } from "../Common/SelectOption";
+
+const formOptions: Option[] = [
+  { value: "creationdate", label: "CreationDate" },
+  { value: "senddate", label: "SendDate" },
+  { value: "seendate", label: "SeenDate" },
+  { value: "completiondate", label: "CompletionDate" },
+  { value: "duedate", label: "DueDate" },
+];
+
+const sendingChannelOptions: Option[] = [
+  { value: "sms", label: "SMS" },
+  { value: "email", label: "Email" },
+];
 
 const FollowUp = () => {
-  const [columns, setColumns] = useState([
-    // { headerName: "ID", field: "id" },
+  const alertMaxLength = 350;
+
+  // ستون‌های جدول
+  const [columns] = useState([
     { headerName: "Follow Up Type", field: "followUpType" },
-    { headerName: "Form", field: "form" },
+    { headerName: "Form / From", field: "form" },
     { headerName: "Day", field: "day" },
     { headerName: "Sending Channel", field: "sendingChannel" },
   ]);
 
-  const [isDynamicDate, setIsDynamicDate] = useState(true);
-  const [form, setForm] = useState<string>();
-  const [duration, setDuration] = useState<string>();
-  const [date, setDate] = useState();
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
-  const [sendingChannelData, setSendingChannelData] = useState<string>();
-  const [alertText, setAlertText] = useState<string>();
-
+  // داده‌های اولیه جدول
   const [followUps, setFollowUps] = useState([
     {
       id: 1,
-      followUpType: "Ali",
-      form: "ali@example.com",
+      followUpType: "Dynamic Date",
+      form: "creationdate - 3",
       day: "Yesterday",
       sendingChannel: "SMS",
     },
     {
       id: 2,
-      followUpType: "Sara",
-      form: "sara@example.com",
+      followUpType: "Dynamic Date",
+      form: "senddate - 2",
       day: "Today",
       sendingChannel: "Email",
     },
-    {
-      id: 3,
-      followUpType: "Reza",
-      form: "reza@example.com",
-      day: "Tommarow",
-      sendingChannel: "Telegraph",
-    },
   ]);
 
-  const formOptions = [
-    { value: "creationdate", label: "CreationDate" },
-    { value: "senddate", label: "SendDate" },
-    { value: "seendate", label: "SeenDate" },
-    { value: "completiondate", label: "CompletionDate" },
-    { value: "duedate", label: "DueDate" },
-  ];
+  // حالت انتخاب Dynamic/Fix date
+  const [isDynamicDate, setIsDynamicDate] = useState(true);
 
-  const sendingChannel = [
-    { value: "sms", label: "SMS" },
-    { value: "email", label: "Email" },
-  ];
+  // مقادیر مرتبط با Dynamic date
+  const [form, setForm] = useState<string>("");
+  const [duration, setDuration] = useState<string>("");
 
-  const handleDoubleClick = (row: any) => {
-    setForm(row.form);
-    setAlertText(row.alertText);
-    setSendingChannelData(row.sendingChannel);
+  // مقادیر مربوط به Fix date
+  const [fixedDate, setFixedDate] = useState<Date | null>(null);
+
+  // Notification information
+  const [sendingChannelData, setSendingChannelData] = useState<string>("");
+  const [alertText, setAlertText] = useState<string>("");
+
+  // افزودن سطر جدید
+  const handleOnAdd = () => {
+    const newFollowUp = {
+      id: Date.now(),
+      followUpType: isDynamicDate ? "Dynamic Date" : "Fix Date",
+      form: isDynamicDate
+        ? `${form} - ${duration}`
+        : "Date: " + (fixedDate ? fixedDate.toLocaleString() : "Not set"),
+      day: fixedDate ? fixedDate.toLocaleString() : "Not set",
+      sendingChannel: sendingChannelData || "Not set",
+    };
+    setFollowUps([...followUps, newFollowUp]);
+
+    // ریست کردن مقادیر فرم
+    setForm("");
+    setDuration("");
+    setFixedDate(null);
+    setSendingChannelData("");
+    setAlertText("");
   };
 
-  // const handleRowClick = (row: any) => {
-  //   console.log("Row clicked:", row);
-  // };
+  const handleOnCancel = () => {
+    console.log("Cancel clicked");
+  };
+
+  const handleRowDoubleClick = (row: any) => {
+    console.log("Row double clicked:", row);
+  };
 
   const handleDeleteClick = (row: any) => {
     alert("Deleted: " + row.name);
   };
 
-  const handleOnAdd = () => {
-    setFollowUps([
-      ...followUps,
-      {
-        id: 8,
-        day: date ?? "Error",
-        form: `${form ?? "" + duration}` ?? "Error",
-        followUpType: isDynamicDate ? "Dynamic Date" : "Fix Date",
-        sendingChannel: sendingChannelData ?? "Error",
-      },
-    ]);
-  };
-
-  const handleOnCancel = () => {};
-
   return (
-    <div className="w-full p-4 bg-white rounded shadow ">
-      <h1 className="text-sm font-semibold mb-4">Existing Follow Ups: </h1>
+    <div className="w-full p-4 bg-white rounded shadow">
+      {/* جدول موجود */}
+      <h1 className="text-sm font-semibold mb-4">Existing Follow Ups:</h1>
       <TableSelector
         columnDefs={columns}
         rowData={followUps}
-        onRowDoubleClick={handleDoubleClick}
-        // onRowClick={handleRowClick}
-        // onSelectButtonClick={handleSelectClick}
+        onRowDoubleClick={handleRowDoubleClick}
         onDeleteButtonClick={handleDeleteClick}
         isSelectDisabled={false}
         height={500}
       />
 
-      <AccordionComponent header={"New"}>
-        <GridComponent header={"Follow up schedule"}>
-          <Radio
-            name="dateType"
-            label="Dynamic date"
-            checked={isDynamicDate}
-            // value={isDynamicDate}
-            onClick={() => setIsDynamicDate(true)}
-          />
-          <NativeSelect
-            label="Form"
-            data={formOptions}
-            onChange={(e) => setForm(e.target.value)}
-            disabled={!isDynamicDate}
-          />
-          <InputComponent
-            label={"Duration"}
-            onChange={(e: any) => setDuration(e.target.value)}
-            inputType="text"
-            disabled={!isDynamicDate}
-          />
-          <Radio
-            name="dateType"
-            label="Fix date"
-            // value={isDynamicDate}
-            onClick={() => setIsDynamicDate(false)}
-          />
-
-          <ActionIcon
-            onClick={() => setIsDatePickerOpen(true)}
-            disabled={isDynamicDate}
-          >
-            <IconCalendarEvent stroke={1.5} />
-          </ActionIcon>
-          <DynamicModal
-            isOpen={isDatePickerOpen}
-            title="Enter Date"
-            children={
-              <AdvancedDatePicker
-                onChange={(e: any) => {
-                  setDate(e.toString());
-                  setIsDatePickerOpen(false);
-
-                  // console.log(e);
-                  // console.log(e?.toLocaleString());
-                }}
+      <AccordionComponent header="New">
+        {/* Follow up schedule */}
+        <div className="mb-6 p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-4">Follow up schedule</h2>
+          <div className="flex flex-col md:flex-row gap-12 items-center">
+            {/* ستون سمت چپ: رادیو باتن‌ها */}
+            <div className="flex flex-col gap-12">
+              <Radio
+                name="dateType"
+                label="Dynamic date"
+                checked={isDynamicDate}
+                onClick={() => setIsDynamicDate(true)}
               />
-            }
-            onClose={() => setIsDatePickerOpen(false)}
-          />
-        </GridComponent>
-        <GridComponent
-          header={"Notification information"}
-          gridCols={2}
-          gridRows={1}
-        >
-          <div>
-            <NativeSelect
-              label="Sending Channel"
-              data={sendingChannel}
-              onChange={(e) => {
-                setSendingChannelData(e.target.value);
-              }}
-            />
-            <div className="flex gap-1.5 py-2">
-              <Button fullWidth onClick={handleOnAdd}>
-                Add
-              </Button>
-              <Button fullWidth onClick={handleOnCancel}>
-                Cancel
-              </Button>
+              <Radio
+                name="dateType"
+                label="Fix date"
+                checked={!isDynamicDate}
+                onClick={() => setIsDynamicDate(false)}
+              />
+            </div>
+            {/* ستون سمت راست: ورودی‌ها */}
+            <div className="flex flex-col gap-4 flex-1">
+              <div className="flex flex-row gap-4">
+                <div className="w-full">
+                  <SelectOption
+                    label="From"
+                    name="form"
+                    options={formOptions}
+                    selectedValue={form}
+                    onChange={(val) => setForm(val as string)}
+                    multiple={false}
+                    disabled={!isDynamicDate}
+                  />
+                </div>
+                <div className="w-full">
+                  <Input
+                    inputType="text"
+                    label="Duration"
+                    placeholder="Enter duration..."
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    disabled={!isDynamicDate}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              <div className="w-full">
+                <DateTimePicker
+                  label="Pick date and time"
+                  placeholder="Pick date and time"
+                  value={fixedDate}
+                  onChange={setFixedDate}
+                  disabled={isDynamicDate}
+                  className="w-full"
+                  leftSection={<IconCalendarTime stroke={1} size={20} />}
+                />
+              </div>
             </div>
           </div>
+        </div>
 
-          <InputComponent
-            inputType="text"
-            label={"AlertText"}
-            onChange={(e: any) => setAlertText(e.target.value)}
-          ></InputComponent>
-        </GridComponent>
+        {/* Notification information */}
+        <div className="mb-6 p-4 border rounded">
+          <h2 className="text-lg font-semibold mb-4">Notification information</h2>
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* ستون چپ: Sending channel + دکمه‌ها */}
+            <div className="flex flex-col flex-1">
+              <SelectOption
+                label="Sending channel"
+                name="sendingChannel"
+                options={sendingChannelOptions}
+                selectedValue={sendingChannelData}
+                onChange={(val) => setSendingChannelData(val as string)}
+                multiple={false}
+              />
+              <div className="mt-auto flex gap-2 pt-4">
+                <Button fullWidth onClick={handleOnAdd}>
+                  Add
+                </Button>
+                <Button fullWidth variant="outline" onClick={handleOnCancel}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+            {/* ستون راست: Alert text */}
+            <div className="flex flex-col flex-1">
+              <label className="block text-sm font-medium mb-1">Alert text</label>
+              <Input
+                inputType="textarea"
+                placeholder="Enter alert text..."
+                value={alertText}
+                onChange={(e) => setAlertText(e.target.value)}
+                maxLength={alertMaxLength}
+                label=""
+              />
+              <div className="text-right text-sm text-gray-500 pt-1">
+                {alertText.length}/{alertMaxLength}
+              </div>
+            </div>
+          </div>
+        </div>
       </AccordionComponent>
+
       <Button className="mt-3" fullWidth>
         Exit
       </Button>

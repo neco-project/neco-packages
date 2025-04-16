@@ -1,11 +1,13 @@
+// Consult.tsx
 import React, { useState } from "react";
-import { Button } from "@mantine/core";
+import { Button, Modal } from "@mantine/core";
 import { IconProgressHelp, IconAlarm, IconCopy } from "@tabler/icons-react";
 import Input from "../Common/InputComponent";
 import SelectOption, { Option } from "../Common/SelectOption";
 import Combobox from "../Common/ComboBox";
 import DataTable from "../Common/TableDynamic/DataTable";
-import ModalSelector from "../Common/ModalSelector/Main";
+import { useDisclosure } from "@mantine/hooks";
+import RolePickerTabs from "../Common/RolesGroups/RolePickerTabs";
 
 const consultWithOptions: Option[] = [
   { value: "PersonA", label: "Person A" },
@@ -48,19 +50,10 @@ const Consult: React.FC = () => {
   const [ccRows, setCcRows] = useState<CCRow[]>([]);
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
 
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [selectedDateRange, setSelectedDateRange] = useState<
-    [Date | null, Date | null]
-  >([null, null]);
+  // مدیریت مودال با useDisclosure
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
-  const ccColumnDefs = [
-    { headerName: "CC", field: "cc", sortable: true },
-    { headerName: "Instruction", field: "instruction", sortable: true },
-  ];
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // تابع انتخاب در مودال: در صورت انتخاب، مقدار consultWith به‌روز می‌شود.
   const handleModalSelect = (selected: any[]) => {
     if (selected.length > 0) {
       setConsultWith(selected[0].name);
@@ -106,27 +99,30 @@ const Consult: React.FC = () => {
     console.log("Cancel clicked");
   };
 
+  const ccColumnDefs = [
+    { headerName: "CC", field: "cc", sortable: true },
+    { headerName: "Instruction", field: "instruction", sortable: true },
+  ];
+
   return (
     <div className="w-full p-4 bg-white rounded shadow space-y-6">
-      <ModalSelector
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSelect={handleModalSelect}
-      />
+      {/* مودال انتخاب مشابه Alert */}
+      <Modal opened={modalOpened} onClose={closeModal} withCloseButton={false}>
+        <RolePickerTabs onSelect={handleModalSelect} onClose={closeModal} />
+      </Modal>
+
       <div className="mb-4">
-        <label className="block text-sm font-bold text-left mb-1">
-          Select Date
-        </label>
+        <label className="block text-sm font-bold text-left mb-1">Select Date</label>
       </div>
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
           By consulting, you can ask others comments about this task.
         </p>
         <p>
-          The receiver can fill the form or leave a comment, but the task
-          responsible is still you and only you can submit it finally.
+          The receiver can fill the form or leave a comment, but the task responsible is still you and only you can submit it finally.
         </p>
       </div>
+
       <div className="flex md:flex-row gap-4">
         <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
@@ -136,8 +132,8 @@ const Consult: React.FC = () => {
             selectedValue={consultWith}
             onChange={(val) => setConsultWith(val as string)}
             multiple={false}
-            allowCustom
-            showButton
+            allowCustom={true}
+            showButton={true}
             onButtonClick={openModal}
             leftIcon={<IconProgressHelp />}
           />
@@ -162,6 +158,7 @@ const Consult: React.FC = () => {
           />
         </div>
       </div>
+
       <div className="flex flex-col md:flex-row gap-4 pt-4">
         <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
@@ -171,8 +168,8 @@ const Consult: React.FC = () => {
             selectedValue={ccValue}
             onChange={(val) => setCcValue(val as string)}
             multiple={false}
-            allowCustom
-            showButton
+            allowCustom={true}
+            showButton={true}
             onButtonClick={openModal}
             leftIcon={<IconCopy size={18} />}
           />
@@ -181,7 +178,9 @@ const Consult: React.FC = () => {
             label="Allowed Duration (Days)"
             min={1}
             value={ccDuration}
-            onChange={(val) => setCcDuration(typeof val === "number" ? val : 1)}
+            onChange={(val) =>
+              setCcDuration(typeof val === "number" ? val : 1)
+            }
             leftIcon={<IconAlarm size={18} />}
           />
         </div>
@@ -195,6 +194,7 @@ const Consult: React.FC = () => {
           />
         </div>
       </div>
+
       <div className="flex items-center gap-2">
         <Button variant="default" onClick={handleAddCCRow}>
           Add
@@ -208,6 +208,7 @@ const Consult: React.FC = () => {
           Delete
         </Button>
       </div>
+
       <DataTable
         columnDefs={ccColumnDefs}
         rowData={ccRows}
@@ -223,21 +224,12 @@ const Consult: React.FC = () => {
         onDelete={() => {}}
         onDuplicate={() => {}}
       />
+
       <div className="flex gap-2">
-        <Button
-          onClick={handleConsult}
-          variant="filled"
-          color="blue"
-          className="flex-1"
-        >
+        <Button onClick={handleConsult} variant="filled" color="blue" className="flex-1">
           Consult
         </Button>
-        <Button
-          onClick={handleCancel}
-          variant="outline"
-          color="gray"
-          className="flex-1"
-        >
+        <Button onClick={handleCancel} variant="outline" color="gray" className="flex-1">
           Cancel
         </Button>
       </div>

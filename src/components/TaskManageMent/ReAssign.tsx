@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import { Button } from "@mantine/core";
+import { Button, Modal } from "@mantine/core";
 import { IconProgressHelp, IconAlarm, IconCopy } from "@tabler/icons-react";
 import Input from "../Common/InputComponent";
 import SelectOption, { Option } from "../Common/SelectOption";
 import Combobox from "../Common/ComboBox";
 import DataTable from "../Common/TableDynamic/DataTable";
-import ModalSelector from "../Common/ModalSelector/Main";
+import { useDisclosure } from "@mantine/hooks";
+import RolePickerTabs from "../Common/RolesGroups/RolePickerTabs";
 
 const consultWithOptions: Option[] = [
   { value: "PersonA", label: "Person A" },
   { value: "PersonB", label: "Person B" },
-  { value: "PersonC", label: "Person C" }
+  { value: "PersonC", label: "Person C" },
 ];
 
 const ccOptions: Option[] = [
   { value: "CCUser1", label: "CC User 1" },
   { value: "CCUser2", label: "CC User 2" },
-  { value: "CCUser3", label: "CC User 3" }
+  { value: "CCUser3", label: "CC User 3" },
 ];
 
 const instructionOptions = [
@@ -27,7 +28,7 @@ const instructionOptions = [
   "جهت اخطار",
   "درخواست راهنمایی",
   "درخواست مشاوره",
-  "درخواست اعلام نظر"
+  "درخواست اعلام نظر",
 ];
 
 interface CCRow {
@@ -37,45 +38,56 @@ interface CCRow {
 }
 
 const Reassign: React.FC = () => {
+  // فیلدهای مربوط به reassignment
   const [consultWith, setConsultWith] = useState<string>("");
   const [consultDuration, setConsultDuration] = useState<number>(3);
   const [consultInstruction, setConsultInstruction] = useState<string>("");
+
+  // فیلدهای مربوط به Carbon Copy (CC)
   const [ccValue, setCcValue] = useState<string>("");
   const [ccDuration, setCcDuration] = useState<number>(3);
   const [ccInstruction, setCcInstruction] = useState<string>("");
   const [ccRows, setCcRows] = useState<CCRow[]>([]);
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+
+  // مدیریت مودال انتخاب برای "Reassign To" با useDisclosure
+  const [modalOpened, { open: openModal, close: closeModal }] =
+    useDisclosure(false);
+
+  // تابع انتخاب در مودال: در صورت انتخاب، مقدار consultWith به‌روز می‌شود.
   const handleModalSelect = (selected: any[]) => {
     if (selected.length > 0) {
       setConsultWith(selected[0].name);
     }
     closeModal();
   };
+
   const handleAddCCRow = () => {
     if (!ccValue || !ccInstruction) return;
     const newRow: CCRow = {
       id: Date.now().toString(),
       cc: ccValue,
-      instruction: ccInstruction
+      instruction: ccInstruction,
     };
-    setCcRows(prev => [...prev, newRow]);
+    setCcRows((prev) => [...prev, newRow]);
     setCcValue("");
     setCcInstruction("");
   };
+
   const handleDeleteCCRow = () => {
     if (selectedCcRows.length === 0) return;
-    const idsToDelete = selectedCcRows.map(row => row.id);
-    setCcRows(prev => prev.filter(r => !idsToDelete.includes(r.id)));
+    const idsToDelete = selectedCcRows.map((row) => row.id);
+    setCcRows((prev) => prev.filter((r) => !idsToDelete.includes(r.id)));
   };
+
   const onCCSelectionChanged = (rows: any[]) => {
     setSelectedCcRows(rows as CCRow[]);
   };
+
   const handleCCRowDoubleClick = (data: any) => {
     console.log("Double clicked row =>", data);
   };
+
   const handleConsult = () => {
     console.log("Reassign with:", consultWith);
     console.log("Reassign duration:", consultDuration);
@@ -83,6 +95,7 @@ const Reassign: React.FC = () => {
     console.log("CC:", ccRows);
     console.log("CC duration:", ccDuration);
   };
+
   const handleCancel = () => {
     console.log("Cancel clicked");
   };
@@ -94,15 +107,20 @@ const Reassign: React.FC = () => {
 
   return (
     <div className="w-full mx-auto p-4 bg-white rounded shadow space-y-6">
-      <ModalSelector isOpen={isModalOpen} onClose={closeModal} onSelect={handleModalSelect} />
+      {/* استفاده از Modal از Mantine به‌طور مستقیم */}
+      <Modal opened={modalOpened} onClose={closeModal} withCloseButton={false}>
+        <RolePickerTabs onSelect={handleModalSelect} onClose={closeModal} />
+      </Modal>
+
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
-          By consulting, you can ask others comments about this task.
+          By reassigning, you can ask others for comments about this task.
         </p>
         <p>
-          The receiver can fill the form or leave a comment, but the task responsible is still you and only you can submit it finally.
+          The receiver can fill the form or leave a comment, but the task responsible remains you and only you can submit it finally.
         </p>
       </div>
+
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
@@ -141,6 +159,7 @@ const Reassign: React.FC = () => {
           />
         </div>
       </div>
+
       <div className="flex flex-col md:flex-row gap-4 pt-4">
         <div className="flex flex-col w-full md:w-1/2 gap-4">
           <SelectOption
@@ -179,6 +198,7 @@ const Reassign: React.FC = () => {
           />
         </div>
       </div>
+
       <div className="flex items-center gap-2">
         <Button variant="default" onClick={handleAddCCRow}>
           Add
@@ -192,6 +212,7 @@ const Reassign: React.FC = () => {
           Delete
         </Button>
       </div>
+
       <DataTable
         columnDefs={ccColumnDefs}
         rowData={ccRows}
@@ -207,11 +228,22 @@ const Reassign: React.FC = () => {
         onDelete={() => {}}
         onDuplicate={() => {}}
       />
+
       <div className="flex gap-2">
-        <Button onClick={handleConsult} variant="filled" color="blue" className="flex-1">
+        <Button
+          onClick={handleConsult}
+          variant="filled"
+          color="blue"
+          className="flex-1"
+        >
           Reassign
         </Button>
-        <Button onClick={handleCancel} variant="outline" color="gray" className="flex-1">
+        <Button
+          onClick={handleCancel}
+          variant="outline"
+          color="gray"
+          className="flex-1"
+        >
           Cancel
         </Button>
       </div>

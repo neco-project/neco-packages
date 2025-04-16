@@ -1,43 +1,33 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Checkbox,
-  NativeSelect,
-  Textarea,
-  TextInput,
-  ActionIcon,
-} from "@mantine/core";
-import { IconDots, IconSearch } from "@tabler/icons-react";
-import AccordionComponent from "../Accordion";
-import GridComponent from "../GridComponent";
+import { Accordion, Button, Checkbox, Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import TableSelector from "../Common/TableDynamic/TableSelector";
-import ModalSelector from "../Common/ModalSelector/Main";
+import AccordionComponent from "../Accordion";
+import Input from "../Common/InputComponent"; // کامپوننت Input که از TextInput, NumberInput, و Textarea پشتیبانی می‌کند
+import SelectOption, { Option } from "../Common/SelectOption";
+import RolePickerTabs from "../Common/RolesGroups/RolePickerTabs";
+
+const expeditorOptions: Option[] = [
+  { value: "john", label: "John" },
+  { value: "sara", label: "Sara" },
+  { value: "admin", label: "Admin" },
+];
 
 const Expedit = () => {
+  // استیت‌های مربوط به فرم Expedit
   const [selectedExpeditor, setSelectedExpeditor] = useState<string>("");
   const [interval, setInterval] = useState<number>(1);
   const [note, setNote] = useState<string>("");
   const [isActive, setIsActive] = useState<boolean>(true);
   const [expedites, setExpedites] = useState<any[]>([]);
 
-  const [isModalOpen, setIsOpenModal] = useState(false);
-  // const [accordionOpen, setAccordionOpen] = useState(true);
+  // ثابت تعداد حداکثر کاراکتر برای Note
+  const noteMaxLength = 400;
 
-  const closeModal = () => {
-    setIsOpenModal(false);
-  };
+  // مدیریت مودال انتخاب Expeditor با RolePickerTabs
+  const [rolePickerOpened, { open: openRolePicker, close: closeRolePicker }] = useDisclosure(false);
 
-  const handleModalSelect = () => {
-    alert("Selected");
-    setIsOpenModal(false);
-  };
-
-  const expeditorOptions = [
-    { value: "john", label: "John" },
-    { value: "sara", label: "Sara" },
-    { value: "admin", label: "Admin" },
-  ];
-
+  // رویداد افزودن Expedit جدید
   const handleAdd = () => {
     setExpedites([
       ...expedites,
@@ -48,101 +38,124 @@ const Expedit = () => {
         state: isActive ? "Active" : "Inactive",
       },
     ]);
-    // Reset
+    // ریست مقادیر فرم
     setSelectedExpeditor("");
     setInterval(1);
     setNote("");
     setIsActive(true);
   };
 
-  const handleOnDoubleClick = (data: any) => {
-    setExpedites(expedites.filter((r) => r !== data));
-  };
-
+  // حذف یک سطر از لیست
   const handleDelete = (row: any) => {
     setExpedites(expedites.filter((r) => r !== row));
   };
 
+  // دابل کلیک برای حذف
+  const handleOnDoubleClick = (data: any) => {
+    setExpedites(expedites.filter((r) => r !== data));
+  };
+
+  // وقتی در RolePickerTabs گزینه‌ای انتخاب شد:
+  const handleModalSelect = (selectedExp: any) => {
+    if (typeof selectedExp === "string") {
+      setSelectedExpeditor(selectedExp);
+    }
+    closeRolePicker();
+  };
+
   return (
     <div className="p-4 w-full bg-white rounded shadow">
-      <ModalSelector
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSelect={handleModalSelect}
-      />
-      <h2 className="text-sm font-semibold mb-1">Existing Expedites:</h2>
-
+      <h2 className="text-sm font-semibold mb-2">Existing Expedites:</h2>
       <TableSelector
         columnDefs={[
           { headerName: "Expeditor", field: "expeditor" },
-          { headerName: "Note", field: "note" },
           { headerName: "Interval (day)", field: "interval" },
+          { headerName: "Note", field: "note" },
           { headerName: "State", field: "state" },
         ]}
         rowData={expedites}
         height={500}
+        onRowDoubleClick={handleOnDoubleClick}
         onDeleteButtonClick={handleDelete}
-        isSelectDisabled={true}
-        onRowDoubleClick={(e: any) => handleOnDoubleClick(e)}
       />
 
       <AccordionComponent header="New">
-        <GridComponent gridCols={2} gridRows={1}>
-          <div>
-            <div className="flex flex-col gap-1">
-              <div className="flex items-end gap-1">
-                <div className="w-full">
-                  <NativeSelect
-                    label="Expeditor"
-                    data={expeditorOptions}
-                    value={selectedExpeditor}
-                    onChange={(e) => setSelectedExpeditor(e.target.value)}
-                  />
-                </div>
-                <ActionIcon color="blue" onClick={() => setIsOpenModal(true)}>
-                  <IconDots size={20} />
-                </ActionIcon>
-              </div>
+        <div className="p-4 border rounded">
+          <div className="flex flex-col md:flex-row gap-16">
+            {/* ستون سمت چپ (Expeditor و دکمه‌ها) */}
+            <div className="w-full md:w-1/2 flex flex-col gap-4">
+              <SelectOption
+                label="Expeditor"
+                name="expeditor"
+                options={expeditorOptions}
+                selectedValue={selectedExpeditor}
+                onChange={(val) => setSelectedExpeditor(val as string)}
+                multiple={false}
+                showButton={true}
+                onButtonClick={openRolePicker} // با کلیک روی "..."، مودال باز می‌شود
+              />
               <Checkbox
                 label="Active"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.currentTarget.checked)}
                 className="mt-1"
               />
+              <div className="flex gap-4 mt-4">
+                <Button fullWidth color="blue" onClick={handleAdd}>
+                  Add
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedExpeditor("");
+                    setInterval(1);
+                    setNote("");
+                    setIsActive(true);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-4 mt-2">
-              <Button color="blue" className="w-28" onClick={handleAdd}>
-                Add
-              </Button>
-              <Button variant="outline" className="w-28">
-                Cancel
-              </Button>
-            </div>
-          </div>
-          <div>
-            <TextInput
-              label="Interval (day)"
-              type="number"
-              min={1}
-              max={400}
-              value={interval}
-              onChange={(e) => setInterval(parseInt(e.target.value))}
-            />
 
-            <Textarea
-              label="Note"
-              maxLength={400}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              autosize
-              minRows={2}
-            />
+            {/* ستون سمت راست (Interval, Note) */}
+            <div className="w-full md:w-1/2 flex flex-col gap-4">
+              {/* فیلد عددی Interval */}
+              <Input
+                inputType="number"
+                label="Interval (day)"
+                value={interval}
+                onChange={
+                  ((v: number | undefined) => setInterval(v ?? 0)) as any
+                }
+              />
+              <div className="flex flex-col gap-2">
+                <label className="block text-sm font-medium">Note</label>
+                <Input
+                  inputType="textarea"
+                  label=""
+                  placeholder="Enter note..."
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  maxLength={noteMaxLength}
+                />
+                <div className="text-right text-sm text-gray-500">
+                  {note.length}/{noteMaxLength}
+                </div>
+              </div>
+            </div>
           </div>
-        </GridComponent>
+        </div>
       </AccordionComponent>
 
+      {/* مودال انتخاب Expeditor با کامپوننت RolePickerTabs */}
+      <Modal opened={rolePickerOpened} onClose={closeRolePicker} withCloseButton={false}>
+        <RolePickerTabs onSelect={handleModalSelect} onClose={closeRolePicker} />
+      </Modal>
+
       <div className="flex justify-center mt-4">
-        <Button color="blue" fullWidth>
+        <Button fullWidth color="blue">
           Exit
         </Button>
       </div>

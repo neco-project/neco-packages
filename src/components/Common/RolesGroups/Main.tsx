@@ -1,30 +1,30 @@
-// ModalSelector.tsx
+// RolesGroups.tsx
 import React from "react";
-import DynamicModal from "../Modal";
+import { Modal } from "@mantine/core";
 import RolePickerTabs from "./RolePickerTabs";
 
-export interface ModalSelectorProps {
+export interface RolesGroupsProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (data: any[]) => void;
   preSelectedIds?: string[];
 }
 
-const ModalSelector: React.FC<ModalSelectorProps> = ({
+const RolesGroups: React.FC<RolesGroupsProps> = ({
   isOpen,
   onClose,
   onSelect,
   preSelectedIds = [],
 }) => {
   return (
-    <DynamicModal isOpen={isOpen} onClose={onClose}>
+    <Modal opened={isOpen} onClose={onClose} withCloseButton={false}>
       <RolePickerTabs
         onSelect={onSelect}
         onClose={onClose}
         preSelectedIds={preSelectedIds}
       />
-    </DynamicModal>
+    </Modal>
   );
 };
 
-export default ModalSelector;
+export default RolesGroups;
