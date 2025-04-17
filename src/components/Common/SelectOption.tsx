@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  Select,
-  MultiSelect,
-  Button,
-  SelectProps,
-  MultiSelectProps,
-} from "@mantine/core";
+// Common/SelectOption.tsx
+import React, { useState, useEffect } from 'react';
+import { Select, MultiSelect, Button } from '@mantine/core';
 
 export interface Option {
   value: string;
   label: string;
 }
 
-export interface DynamicSelectorProps {
+interface DynamicSelectorProps {
   name?: string;
   options: Option[];
   selectedValue: string | string[];
@@ -21,19 +16,17 @@ export interface DynamicSelectorProps {
   showButton?: boolean;
   onButtonClick?: () => void;
   leftIcon?: React.ReactNode;
-  error?: boolean;
-  errorMessage?: string;
   disabled?: boolean;
   loading?: boolean;
-  allowCustom?: boolean;
   multiple?: boolean;
+  allowCustom?: boolean;
 }
 
 const SelectOption: React.FC<DynamicSelectorProps> = ({
   options = [],
   selectedValue,
   onChange,
-  label = "Select",
+  label = 'Select',
   showButton = false,
   onButtonClick,
   leftIcon,
@@ -41,47 +34,38 @@ const SelectOption: React.FC<DynamicSelectorProps> = ({
   loading = false,
   multiple = false,
 }) => {
-  const [data, setData] = useState<Option[]>(options);
+  const [data, setData] = useState(options);
 
-  useEffect(() => {
-    setData(options);
-  }, [options]);
+  useEffect(() => setData(options), [options]);
 
-  const handleChangeSingle = (value: string | null) => {
-    if (value !== null) {
-      onChange(value);
-    }
+  const handleChangeSingle = (val: string | null) => val && onChange(val);
+  const handleChangeMulti  = (vals: string[]) => onChange(vals);
+
+  const selectProps = {
+    label,
+    disabled,
+    leftSection: leftIcon,
+    data,
   };
-
-  const handleChangeMulti = (values: string[]) => {
-    onChange(values);
-  };
-
-  let renderedSelect;
-  if (multiple) {
-    const multiSelectProps: MultiSelectProps = {
-      leftSection: leftIcon,
-      label,
-      value: selectedValue as string[],
-      onChange: handleChangeMulti,
-      disabled,
-      data: data,
-    };
-    renderedSelect = <MultiSelect className="w-full" {...multiSelectProps} />;
-  } else {
-    const selectProps: SelectProps = {
-      label,
-      value: selectedValue as string,
-      onChange: handleChangeSingle,
-      disabled,
-      data: data, // اضافه کردن اینجا
-    };
-    renderedSelect = <Select className="w-full" {...(selectProps as any)} />;
-  }
 
   return (
     <div className="flex gap-2 items-end">
-      {renderedSelect}
+      {multiple ? (
+        <MultiSelect
+          {...selectProps}
+          value={selectedValue as string[]}
+          onChange={handleChangeMulti}
+          className="w-full"
+        />
+      ) : (
+        <Select
+          {...selectProps}
+          value={selectedValue as string}
+          onChange={handleChangeSingle}
+          className="w-full"
+        />
+      )}
+
       {showButton && !loading && (
         <Button onClick={onButtonClick} disabled={disabled} title="اضافه کردن">
           ...

@@ -1,12 +1,13 @@
-// RolesGroups.tsx
-import React from "react";
-import { Modal } from "@mantine/core";
-import RolePickerTabs from "./RolePickerTabs";
+// RolesGroups/RolesGroups.tsx
+import React from 'react';
+import { Modal } from '@mantine/core';
+import RolePickerTabs from './RolePickerTabs';
+import { SelectedItem } from './MembersTable';
 
-export interface RolesGroupsProps {
+interface RolesGroupsProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (data: any[]) => void;
+  onSelect: (data: SelectedItem[]) => void;
   preSelectedIds?: string[];
 }
 

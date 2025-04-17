@@ -1,8 +1,8 @@
-// RolePickerTabs.tsx
-import React, { useState } from "react";
-import { Tabs } from "@mantine/core";
-import MembersTable, { SelectedItem } from "./MembersTable";
-import RoleGroupPostPicker from "./RoleGroupPostPicker";
+// RolesGroups/RolePickerTabs.tsx
+import React, { useState } from 'react';
+import { Tabs } from '@mantine/core';
+import MembersTable, { SelectedItem } from './MembersTable';
+import RoleGroupPostPicker from './RoleGroupPostPicker';
 
 interface RolePickerTabsProps {
   onSelect: (selected: SelectedItem[]) => void;
@@ -15,13 +15,10 @@ const RolePickerTabs: React.FC<RolePickerTabsProps> = ({
   onClose,
   preSelectedIds = [],
 }) => {
-  const [activeTab, setActiveTab] = useState<"roles" | "roleGroups">("roles");
+  const [activeTab, setActiveTab] = useState<'roles' | 'roleGroups'>('roles');
 
   return (
-    <Tabs
-      value={activeTab}
-      onChange={(value) => setActiveTab(value as "roles" | "roleGroups")}
-    >
+    <Tabs value={activeTab} onChange={val => setActiveTab(val as any)}>
       <Tabs.List>
         <Tabs.Tab value="roles">Roles</Tabs.Tab>
         <Tabs.Tab value="roleGroups">Role Groups</Tabs.Tab>
