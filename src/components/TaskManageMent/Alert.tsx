@@ -1,7 +1,6 @@
 // Alert.tsx
 import React, { useState } from 'react';
-import { Accordion, Button, Radio, Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Accordion, Button, Radio } from '@mantine/core';
 import Input from '../Common/InputComponent';
 import SelectOption, { Option } from '../Common/SelectOption';
 import RolePickerTabs from '../Common/RolesGroups/RolePickerTabs';
@@ -24,16 +23,21 @@ const channels: Option[] = [
 ];
 
 const Alert: React.FC = () => {
-  // Stateهای فرم
-  const [isTimeBased,    setIsTimeBased]    = useState(true);
-  const [timeField,      setTimeField]      = useState('');
-  const [duration,       setDuration]       = useState('');
-  const [changingField,  setChangingField]  = useState('');
-  const [step,           setStep]           = useState('');
-  const [receiver,       setReceiver]       = useState('');
-  const [alertText,      setAlertText]      = useState('');
-  const [sendingChannel, setSendingChannel] = useState('');
-  const [alerts,         setAlerts]         = useState<any[]>([
+  // form state
+  const [isTimeBased,   setIsTimeBased]   = useState(true);
+  const [timeField,     setTimeField]     = useState('');
+  const [duration,      setDuration]      = useState('');
+  const [changingField, setChangingField] = useState('');
+  const [step,          setStep]          = useState('');
+  const [receiver,      setReceiver]      = useState('');
+  const [alertText,     setAlertText]     = useState('');
+  const [sendingChannel,setSendingChannel]= useState('');
+  const [opened,        setOpened]        = useState<string | null>(null);
+
+  const alertMaxLength = 350;
+
+  // existing alerts
+  const [alerts, setAlerts] = useState<any[]>([
     {
       schedule: 'Time Based',
       field:    'created',
@@ -51,11 +55,6 @@ const Alert: React.FC = () => {
       receiver: 'User',
     },
   ]);
-  const [opened,         setOpened]         = useState<string | null>(null);
-  const [rolePickerOpened, { open: openRolePicker, close: closeRolePicker }] =
-    useDisclosure(false);
-
-  const alertMaxLength = 350;
 
   const alertColumns = [
     { headerName: 'Schedule', field: 'schedule' },
@@ -78,7 +77,7 @@ const Alert: React.FC = () => {
         receiver,
       },
     ]);
-    // Reset فرم
+    // reset form
     setTimeField('');
     setDuration('');
     setChangingField('');
@@ -90,11 +89,6 @@ const Alert: React.FC = () => {
 
   const handleDeleteAlert = (row: any) => {
     setAlerts(prev => prev.filter(a => a !== row));
-  };
-
-  const handleRoleSelect = (items: SelectedItem[]) => {
-    setReceiver(items.map(i => i.name).join(', '));
-    closeRolePicker();
   };
 
   const handleEditExisting = (data: any) => {
@@ -111,22 +105,18 @@ const Alert: React.FC = () => {
 
   return (
     <div className="p-4 bg-white rounded shadow w-full">
-      {/* Modal RolePicker */}
-      <Modal opened={rolePickerOpened} onClose={closeRolePicker} withCloseButton={false}>
-        <RolePickerTabs onSelect={handleRoleSelect} onClose={closeRolePicker} />
-      </Modal>
-  
       {/* Existing Alerts */}
-
-      <h1 className="text-sm font-semibold mb-4">Existing Follow Ups:</h1>
+      <h2 className="text-lg font-semibold mb-4">Existing Alerts</h2>
       <DataTable
         columnDefs={alertColumns}
         rowData={alerts}
         onRowDoubleClick={handleEditExisting}
         onDeleteButtonClick={handleDeleteAlert}
+        onSelectButtonClick={handleEditExisting}
         isSelectDisabled={false}
         isDeleteDisabled={false}
-        showSearch={true}
+
+        showSearch
         showAddIcon={false}
         showEditIcon={false}
         showDeleteIcon={false}
@@ -134,35 +124,36 @@ const Alert: React.FC = () => {
         showViewIcon={false}
         containerHeight="300px"
       />
-      {/* New Alert Accordion */}
+
+      {/* New Alert */}
       <Accordion
         value={opened}
         onChange={setOpened}
         chevronPosition="left"
         variant="filled"
+        className="-mt-10"
         styles={{
-          item:    { backgroundColor: "transparent" },
+          item:    { backgroundColor: 'transparent' },
           control: {
-            backgroundColor: "transparent",
-            padding: "0.5rem 0",
-            display: "flex",
-            alignItems: "center",
+            backgroundColor: 'transparent',
+            padding: '0.5rem 0',
+            display: 'flex',
+            alignItems: 'center',
           },
           chevron: {
-            backgroundColor: "#197CAE",
-            color: "#fff",
+            backgroundColor: '#197CAE',
+            color: '#fff',
             width: 28,
             height: 28,
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             marginRight: 8,
           },
-          label: { fontWeight: 500, fontSize: "1rem" },
-          panel: { backgroundColor: "transparent", paddingTop: 8 },
+          label: { fontWeight: 500, fontSize: '1rem' },
+          panel: { backgroundColor: 'transparent', paddingTop: 8 },
         }}
-        className='-mt-10'
       >
         <Accordion.Item value="new-alert">
           <Accordion.Control>New Alert</Accordion.Control>
@@ -191,7 +182,8 @@ const Alert: React.FC = () => {
                       label="Time Field"
                       options={timeFields}
                       selectedValue={timeField}
-                      onChange={val => setTimeField(val as string)}
+                      onChange={v => setTimeField(v as string)}
+                      showButton
                       disabled={!isTimeBased}
                     />
                     <Input
@@ -221,7 +213,7 @@ const Alert: React.FC = () => {
                   </div>
                 </div>
               </div>
-  
+
               {/* Notification Info */}
               <div className="p-4 bg-gray-100 rounded">
                 <h3 className="text-md font-semibold mb-3">Notification Info</h3>
@@ -231,16 +223,23 @@ const Alert: React.FC = () => {
                       label="Receiver"
                       options={receivers}
                       selectedValue={receiver}
-                      onChange={val => setReceiver(val as string)}
-                      allowCustom
+                      onChange={v => setReceiver(v as string)}
                       showButton
-                      onButtonClick={openRolePicker}
+                      children={
+                        <RolePickerTabs
+                          onSelect={(items: SelectedItem[]) =>
+                            setReceiver(items.map(i => i.name).join(', '))
+                          }
+                          onClose={() => {}}
+                        />
+                      }
                     />
                     <SelectOption
                       label="Channel"
                       options={channels}
                       selectedValue={sendingChannel}
-                      onChange={val => setSendingChannel(val as string)}
+                      onChange={v => setSendingChannel(v as string)}
+                      showButton={false}
                     />
                     <div className="mt-auto flex gap-2 pt-4">
                       <Button fullWidth onClick={handleAddAlert}>
@@ -271,8 +270,8 @@ const Alert: React.FC = () => {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-  
-      {/* Exit Button */}
+
+      {/* Exit */}
       <div className="flex justify-center mt-4">
         <Button fullWidth color="blue">
           Exit

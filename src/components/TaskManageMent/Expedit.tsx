@@ -1,7 +1,6 @@
 // Expedit.tsx
 import React, { useState } from 'react';
-import { Accordion, Button, Checkbox, Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Accordion, Button, Checkbox } from '@mantine/core';
 import Input from '../Common/InputComponent';
 import SelectOption, { Option } from '../Common/SelectOption';
 import RolePickerTabs from '../Common/RolesGroups/RolePickerTabs';
@@ -15,24 +14,20 @@ const expeditorOptions: Option[] = [
 ];
 
 const Expedit: React.FC = () => {
-  // فرم
+  // form state
   const [selectedExpeditor, setSelectedExpeditor] = useState<string>('');
-  const [interval,           setInterval]        = useState<number>(1);
-  const [note,               setNote]            = useState<string>('');
-  const [isActive,           setIsActive]        = useState<boolean>(true);
+  const [interval, setInterval]                 = useState<number>(1);
+  const [note, setNote]                         = useState<string>('');
+  const [isActive, setIsActive]                 = useState<boolean>(true);
 
-  // جدول (با دو ردیف مثال)
+  // existing rows
   const [expedites, setExpedites] = useState<any[]>([
     { expeditor: 'john', interval: 3, note: 'First batch',  state: 'Active'   },
     { expeditor: 'sara', interval: 1, note: 'Urgent items', state: 'Inactive' },
   ]);
 
-  // کنترل Accordion
+  // accordion open
   const [opened, setOpened] = useState<string | null>(null);
-
-  // Modal Expeditor
-  const [rolePickerOpened, { open: openRolePicker, close: closeRolePicker }] =
-    useDisclosure(false);
 
   const noteMaxLength = 400;
 
@@ -53,7 +48,7 @@ const Expedit: React.FC = () => {
         state: isActive ? 'Active' : 'Inactive',
       },
     ]);
-    // ریست فرم
+    // reset form
     setSelectedExpeditor('');
     setInterval(1);
     setNote('');
@@ -78,10 +73,10 @@ const Expedit: React.FC = () => {
     handleSelectExisting(row);
   };
 
+  // when RolePickerTabs calls onSelect, the modal will auto-close
   const handleModalSelect = (items: SelectedItem[] | string) => {
-    const val = Array.isArray(items) ? (items[0] as any).name : items;
+    const val = Array.isArray(items) ? (items[0] as SelectedItem).name : items;
     setSelectedExpeditor(val as string);
-    closeRolePicker();
   };
 
   return (
@@ -93,8 +88,7 @@ const Expedit: React.FC = () => {
         rowData={expedites}
         onRowDoubleClick={handleDoubleClick}
 
-        // toolbar
-        showSearch={true}
+        showSearch
         showAddIcon={false}
         showEditIcon={false}
         showDeleteIcon={false}
@@ -107,7 +101,6 @@ const Expedit: React.FC = () => {
         isDeleteDisabled={false}
         isSelectDisabled={false}
 
-        // نیم کردن ارتفاع جدول
         containerHeight="300px"
       />
 
@@ -150,13 +143,16 @@ const Expedit: React.FC = () => {
                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                   <SelectOption
                     label="Expeditor"
-                    name="expeditor"
                     options={expeditorOptions}
                     selectedValue={selectedExpeditor}
                     onChange={val => setSelectedExpeditor(val as string)}
-                    multiple={false}
                     showButton
-                    onButtonClick={openRolePicker}
+                    children={
+                      <RolePickerTabs
+                        onSelect={handleModalSelect}
+                        onClose={() => {}}
+                      />
+                    }
                   />
                   <Checkbox
                     label="Active"
@@ -164,9 +160,7 @@ const Expedit: React.FC = () => {
                     onChange={e => setIsActive(e.currentTarget.checked)}
                   />
                   <div className="flex gap-4 mt-4">
-                    <Button fullWidth onClick={handleAdd}>
-                      Add
-                    </Button>
+                    <Button fullWidth onClick={handleAdd}>Add</Button>
                     <Button
                       fullWidth
                       variant="outline"
@@ -211,16 +205,9 @@ const Expedit: React.FC = () => {
         </Accordion.Item>
       </Accordion>
 
-      {/* Modal Expeditor */}
-      <Modal opened={rolePickerOpened} onClose={closeRolePicker} withCloseButton={false}>
-        <RolePickerTabs onSelect={handleModalSelect} onClose={closeRolePicker} />
-      </Modal>
-
       {/* Exit Button */}
       <div className="flex justify-center mt-4">
-        <Button fullWidth color="blue">
-          Exit
-        </Button>
+        <Button fullWidth color="blue">Exit</Button>
       </div>
     </div>
   );

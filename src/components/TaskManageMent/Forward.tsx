@@ -1,5 +1,6 @@
+// src/components/Forward/Forward.tsx
 import React, { useState } from "react";
-import { Button, Modal } from "@mantine/core";
+import { Button } from "@mantine/core";
 import {
   IconCalendarTime,
   IconUser,
@@ -7,13 +8,12 @@ import {
   IconArrowRight,
 } from "@tabler/icons-react";
 import Input from "../Common/InputComponent";
-import AdvancedDatePicker from "../Common/DatePicker";
+import { DateTimePicker } from "@mantine/dates";
 import SelectOption, { Option } from "../Common/SelectOption";
 import GenericCombobox from "../Common/ComboBox";
 import DataTable from "../Common/TableDynamic/DataTable";
-import { DateTimePicker } from "@mantine/dates";
-import { useDisclosure } from "@mantine/hooks";
 import RolePickerTabs from "../Common/RolesGroups/RolePickerTabs";
+import { SelectedItem } from "../Common/RolesGroups/MembersTable";
 
 const forwardToOptions: Option[] = [
   { value: "UserA", label: "User A" },
@@ -44,61 +44,50 @@ const Forward: React.FC = () => {
   const [allowedDuration, setAllowedDuration] = useState<number>(3);
   const [forwardDate, setForwardDate] = useState<Date | null>(null);
   const [ccValue, setCcValue] = useState<string>("");
-  const [ccDuration, setCcDuration] = useState<number>(3);
   const [ccInstruction, setCcInstruction] = useState<string>("");
   const [ccRows, setCcRows] = useState<CCRow[]>([]);
   const [selectedCcRows, setSelectedCcRows] = useState<CCRow[]>([]);
   const [comment, setComment] = useState<string>("");
 
-  // مدیریت مودال انتخاب "Forward To" با useDisclosure
-  const [modalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-  // اگر بخواهید از مودال تاریخ سفارشی استفاده کنید:
-  const [calendarModalOpened, { open: openCalendarModal, close: closeCalendarModal }] =
-    useDisclosure(false);
-
-  // تابع انتخاب در مودال: مقدار selectedForwardTo به‌روز می‌شود.
-  const handleModalSelect = (selected: any[]) => {
-    if (selected.length > 0) {
-      setForwardTo(selected[0].name);
+  // Handler for when RolePickerTabs selects one or more items:
+  const handleForwardToSelect = (items: SelectedItem[]) => {
+    if (items.length > 0) {
+      setForwardTo(items.map((i) => i.name).join(", "));
     }
-    closeModal();
   };
 
   const handleAddCCRow = () => {
     if (!ccValue || !ccInstruction) return;
-    const newRow: CCRow = {
-      id: Date.now().toString(),
-      cc: ccValue,
-      instruction: ccInstruction,
-    };
-    setCcRows((prev) => [...prev, newRow]);
+    setCcRows((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        cc: ccValue,
+        instruction: ccInstruction,
+      },
+    ]);
     setCcValue("");
     setCcInstruction("");
   };
 
   const handleDeleteCCRow = () => {
-    if (selectedCcRows.length === 0) return;
-    const idsToDelete = selectedCcRows.map((row) => row.id);
-    setCcRows((prev) => prev.filter((r) => !idsToDelete.includes(r.id)));
+    const toDelete = new Set(selectedCcRows.map((r) => r.id));
+    setCcRows((prev) => prev.filter((r) => !toDelete.has(r.id)));
   };
 
-  const onCCSelectionChanged = (rows: any[]) => {
-    setSelectedCcRows(rows as CCRow[]);
-  };
-
-  const handleCCRowDoubleClick = (data: any) => {
-    console.log("Double clicked row =>", data);
+  const handleCCRowDoubleClick = (row: CCRow) => {
+    console.log("Double clicked CC row:", row);
   };
 
   const handleForward = () => {
-    console.log("Forward:", forward);
-    console.log("Forward To:", forwardTo);
-    console.log("Allowed Duration:", allowedDuration);
-    console.log("Forward Date:", forwardDate);
-    console.log("Enter Your Comment:", comment);
-    console.log("CC:", ccRows);
-    console.log("CC Duration:", ccDuration);
+    console.log({
+      forward,
+      forwardTo,
+      allowedDuration,
+      forwardDate,
+      comment,
+      ccRows,
+    });
   };
 
   const handleCancel = () => {
@@ -107,34 +96,7 @@ const Forward: React.FC = () => {
 
   return (
     <div className="w-full p-4 bg-white rounded shadow space-y-6">
-      {/* مودال انتخاب "Forward To" */}
-      <Modal opened={modalOpened} onClose={closeModal} withCloseButton={false}>
-        <RolePickerTabs onSelect={handleModalSelect} onClose={closeModal} />
-      </Modal>
-
-      {/* مودال تاریخ (در صورت استفاده از AdvancedDatePicker به جای DateTimePicker) */}
-      <Modal
-        opened={calendarModalOpened}
-        onClose={closeCalendarModal}
-        title="Select Date"
-      >
-        <AdvancedDatePicker
-          controlled
-          value={forwardDate}
-          onChange={(val) => {
-            if (val instanceof Date) {
-              setForwardDate(val);
-              closeCalendarModal();
-            }
-          }}
-        />
-      </Modal>
-
-      <div className="mb-4">
-        <label className="block text-sm font-bold text-left mb-1">
-          Select Date
-        </label>
-      </div>
+      {/* Explanation */}
       <div className="text-sm text-gray-700 space-y-1">
         <p className="font-semibold">
           By forwarding, you can ask others comments about this task.
@@ -145,7 +107,7 @@ const Forward: React.FC = () => {
         </p>
       </div>
 
-      {/* Row 1: Forward and Forward Date */}
+      {/* Row 1: From & Date */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/2">
           <Input
@@ -164,14 +126,13 @@ const Forward: React.FC = () => {
             value={forwardDate}
             onChange={setForwardDate}
             leftSection={<IconCalendarTime stroke={1} />}
-            /* در صورت تمایل می‌توانید به جای DateTimePicker از مودال تاریخ سفارشی استفاده کنید:
-            onClick={() => openCalendarModal()} */
           />
         </div>
       </div>
 
-      {/* Row 2: Forward To and Allowed Duration */}
+      {/* Row 2: Forward To & Allowed Duration */}
       <div className="flex flex-col md:flex-row gap-4">
+        {/* Forward To */}
         <div className="w-full md:w-1/2">
           <SelectOption
             label="Forward To"
@@ -181,9 +142,16 @@ const Forward: React.FC = () => {
             onChange={(val) => setForwardTo(val as string)}
             leftIcon={<IconArrowRight stroke={1} />}
             showButton
-            onButtonClick={openModal}
+            children={
+              <RolePickerTabs
+                onSelect={handleForwardToSelect}
+                onClose={() => {}}
+              />
+            }
           />
         </div>
+
+        {/* Allowed Duration */}
         <div className="w-full md:w-1/2">
           <Input
             inputType="number"
@@ -198,7 +166,7 @@ const Forward: React.FC = () => {
         </div>
       </div>
 
-      {/* Row 3: Enter Your Comment using GenericCombobox */}
+      {/* Row 3: Comment */}
       <div className="w-full">
         <GenericCombobox
           label="Enter Your Comment"
@@ -209,7 +177,7 @@ const Forward: React.FC = () => {
         />
       </div>
 
-      {/* CC section */}
+      {/* CC Section */}
       <div className="flex items-center gap-2">
         <Button variant="default" onClick={handleAddCCRow}>
           Add
@@ -230,19 +198,19 @@ const Forward: React.FC = () => {
         ]}
         rowData={ccRows}
         rowSelectionType="multiple"
-        onSelectionChanged={onCCSelectionChanged}
+        onSelectionChanged={(rows) => setSelectedCcRows(rows as CCRow[])}
         onRowDoubleClick={handleCCRowDoubleClick}
-        showSearch={false}
-        containerHeight="250px"
         onRowClick={() => {}}
         onView={() => {}}
         onAdd={() => {}}
         onEdit={() => {}}
         onDelete={() => {}}
         onDuplicate={() => {}}
+        showSearch={false}
+        containerHeight="250px"
       />
 
-      {/* Final action buttons */}
+      {/* Action Buttons */}
       <div className="flex gap-2">
         <Button
           onClick={handleForward}
